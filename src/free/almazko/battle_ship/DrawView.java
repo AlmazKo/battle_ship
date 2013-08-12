@@ -58,11 +58,13 @@ public class DrawView extends View implements OnTouchListener {
 
                 cell = battleMap.recognizeCell(event.getX(), event.getY());
 
-                if (hasCell(cell)) {
+                int size = cells.size();
+
+                if (cell.equals(cells.get(size - 1))) {
                     return false;
                 }
 
-                if (cells.size() == 1) {
+                if (size == 1) {
                     direction = recognizeDirection(cell);
                     if (direction != null) {
                         this.event = event;
