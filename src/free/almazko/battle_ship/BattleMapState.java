@@ -30,8 +30,12 @@ public class BattleMapState {
         if (isPositionChanged(canvas)) {
             width = canvas.getWidth();
             height = canvas.getHeight();
-            cellSizeY = height / numberCells;
-            cellSizeX = width / numberCells;
+            if (width>= height) {
+                cellSizeY = cellSizeX = height / numberCells;
+            } else {
+                cellSizeY = cellSizeX = width / numberCells;
+            }
+
         }
 
         this.canvas = canvas;
