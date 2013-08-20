@@ -2,7 +2,7 @@ package free.almazko.battle_ship;
 
 import android.graphics.Canvas;
 
-public class BattleMapState {
+public class DrawBattleMapState {
     public int width;
     public int height;
     public int cellSizeX;
