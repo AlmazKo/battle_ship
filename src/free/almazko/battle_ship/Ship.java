@@ -10,13 +10,18 @@ import java.util.*;
  * To change this template use File | Settings | File Templates.
  */
 public class Ship {
-    Deque<Cell> cells = new LinkedList<Cell>();
+    private Deque<Cell> cells = new LinkedList<Cell>();
+    private Direction direction;
 
-    public Ship(Deque<Cell> cells) {
+    public static enum Direction {VERTICAL, HORIZONTAL}
+
+    public Ship(Deque<Cell> cells, Direction direction) {
+        this.direction = direction;
         this.cells = cells;
     }
 
-    public Ship(Collection<Cell> newCells) {
+    public Ship(Collection<Cell> newCells, Direction direction) {
+        this.direction = direction;
         cells.addAll(newCells);
     }
 
@@ -27,4 +32,17 @@ public class Ship {
     public Deque<Cell> getCells() {
         return cells;
     }
+
+    public int size() {
+        return cells.size();
+    }
+
+    public boolean isVertical() {
+        return this.direction.equals(Direction.VERTICAL);
+    }
+
+    public boolean isHorizontal() {
+        return this.direction.equals(Direction.HORIZONTAL);
+    }
+
 }

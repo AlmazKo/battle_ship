@@ -74,7 +74,7 @@ public class DrawView extends View implements OnTouchListener {
                 ship = recognizeShip(cell);
             }
 
-            if (!battleMap.possibleAddShip(ship)) {
+            if (!battleMap.freeSpaceForShip(ship)) {
                 return false;
             }
 
@@ -118,7 +118,7 @@ public class DrawView extends View implements OnTouchListener {
             }
         }
 
-        return new Ship(cells);
+        return new Ship(cells, Ship.Direction.HORIZONTAL);
     }
 
     private Ship verticalShip(Cell cell) {
@@ -139,7 +139,7 @@ public class DrawView extends View implements OnTouchListener {
             }
         }
 
-        return new Ship(cells);
+        return new Ship(cells, Ship.Direction.VERTICAL);
     }
 
     private Direction recognizeDirection(Cell cell) {

@@ -14,7 +14,7 @@ public class DrawBattleMapState {
         return this.canvas == null;
     }
 
-     public boolean isPositionChanged(Canvas canvas) {
+    public boolean isPositionChanged(Canvas canvas) {
         if (isEmpty()) {
             return true;
         }
@@ -30,7 +30,7 @@ public class DrawBattleMapState {
         if (isPositionChanged(canvas)) {
             width = canvas.getWidth();
             height = canvas.getHeight();
-            if (width>= height) {
+            if (width >= height) {
                 cellSizeY = cellSizeX = height / numberCells;
             } else {
                 cellSizeY = cellSizeX = width / numberCells;
@@ -39,5 +39,15 @@ public class DrawBattleMapState {
         }
 
         this.canvas = canvas;
+    }
+
+    public boolean isVertical() {
+        if (canvas != null) {
+            if (width < height) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
