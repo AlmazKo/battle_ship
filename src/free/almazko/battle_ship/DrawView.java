@@ -12,36 +12,54 @@ import java.util.LinkedList;
 public class DrawView extends View implements OnTouchListener {
     private static final String TAG = "DrawView";
 
-    private enum State {DRAFT, COMPLETE_SHIP}
+    private enum State {DRAFT, COMPLETE_SHIP, COMPLETE_ALL}
 
     private enum Direction {VERTICAL, HORIZONTAL}
 
     private State state = State.DRAFT;
     private Direction direction;
 
-    DrawBattleMap drawBattleMap = new DrawBattleMap();
-    BattleMap battleMap = new BattleMap(drawBattleMap);
+    DrawBattleMap drawBattleMap;
+    BattleMap battleMap;
     MotionEvent event;
     Ship currentShip;
 
     public DrawView(Context context) {
         super(context);
 
-        setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+//        setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         setFocusable(true);
         setFocusableInTouchMode(true);
         setOnTouchListener(this);
     }
 
+    private void initBattleMap(Canvas canvas) {
+        drawBattleMap = new DrawBattleMap(canvas);
+        battleMap = new BattleMap(drawBattleMap);
+    }
+
+
     @Override
     public void onDraw(Canvas canvas) {
-        drawBattleMap.draw(canvas);
+        if (battleMap == null) {
+            initBattleMap(canvas);
+        }
+
+        drawBattleMap.drawGrid(canvas);
         if (event != null) {
             if (state == State.DRAFT) {
                 battleMap.addDraftShip(currentShip);
             } else {
                 battleMap.addShip(currentShip);
-                state = State.DRAFT;
+
+                if (battleMap.isComplete()) {
+                    state = State.COMPLETE_ALL;
+                    drawBattleMap.minimize(150);
+                } else {
+                    state = State.DRAFT;
+                }
+
+
             }
         }
     }

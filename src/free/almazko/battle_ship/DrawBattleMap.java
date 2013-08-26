@@ -10,7 +10,7 @@ public class DrawBattleMap {
 
     //    List<Point> points = new ArrayList<Point>();
     private static final byte FIELD_SIZE = 10;
-    private static final float ROW_STROKE = 11;
+    private static final float ROW_STROKE = 3;
     private static final float CELL_OFFSET = (float) Math.floor(ROW_STROKE / 2);
     Paint linePaint = new Paint();
     Paint textPaint = new Paint();
@@ -23,8 +23,9 @@ public class DrawBattleMap {
     public static final Paint PAINT_WRONG_SHIP = new Paint();
     public static final Paint PAINT_SHIPS_AREA = new Paint();
 
-    int reviewPlaceX = 900;
-    int reviewPlaceY = 50;
+    int reviewPlaceX, reviewPlaceY;
+    int reviewCellSpacing;
+    int fontSize, reviewCellSize;
 
     static {
         PAINT_SHIPS_AREA.setStyle(Paint.Style.FILL);
@@ -46,25 +47,53 @@ public class DrawBattleMap {
         PAINT_WRONG_SHIP.setShadowLayer(ROW_STROKE, 0, 0, 0xFFFF0000);
     }
 
-    public DrawBattleMap() {
+    public DrawBattleMap(Canvas canvas) {
+
+
+        // draftShipPointer.setMaskFilter(new BlurMaskFilter(20, BlurMaskFilter.Blur.SOLID));
+
+
+        initVars(canvas);
+    }
+
+    private void initVars(Canvas canvas) {
+
+        state.update(canvas, FIELD_SIZE);
+
+        reviewCellSpacing = 2;
+        fontSize = 12;
+        reviewCellSize = 12;
+//Galaxy Note   // int reviewCellSize = 32;
+
         linePaint.setColor(0xFF001327);
         linePaint.setAntiAlias(true);
         linePaint.setStrokeWidth(ROW_STROKE);
 
         textPaint.setColor(0xFFFFFFFF);
         textPaint.setAntiAlias(true);
-        textPaint.setTextSize(40);
+
 
         previewPaint.setColor(0xFF00DD73);
         previewPaint.setAntiAlias(true);
         previewPaint.setStyle(Paint.Style.FILL);
-        previewPaint.setShadowLayer(7, 0, 0, 0xFF00FF00);
-        // draftShipPointer.setMaskFilter(new BlurMaskFilter(20, BlurMaskFilter.Blur.SOLID));
+        previewPaint.setShadowLayer(reviewCellSpacing, 0, 0, 0xFF00FF00);
+
+
+        textPaint.setTextSize(fontSize);
+
+        if (state.isVertical()) {
+            reviewPlaceX = (int) ROW_STROKE;
+            reviewPlaceY = state.size() + fontSize;
+        } else {
+            reviewPlaceX = state.size() + fontSize;
+            reviewPlaceY = (int) ROW_STROKE;
+        }
     }
 
-    protected void draw(Canvas canvas) {
-
-        state.update(canvas, FIELD_SIZE);
+    protected void drawGrid(Canvas canvas) {
+        if (state.update(canvas, FIELD_SIZE)) {
+            initVars(canvas);
+        }
 
         int width = state.cellSizeY * FIELD_SIZE;
         int height = width;
@@ -79,39 +108,32 @@ public class DrawBattleMap {
             y += offset;
             x += offset;
         }
-//
-//        text(1,5);
-//        text(2,4);
-//        text(3,3);
-//        text(4,2);
-//        text(5,1);
+    }
+
+
+    public void minimize(int size) {
+        state.update(size, FIELD_SIZE);
+        drawGrid(state.canvas);
     }
 
     public void text(int size, int number) {
 
-        int cellSize = 32;
+        int posX = reviewPlaceX, posY = reviewPlaceY;
 
-        int posX, posY;
-
-        if (state.isVertical()) {
-            posX = cellSize;
-            posY = 850 + size*50;
-        } else {
-            posX = reviewPlaceX + cellSize;
-            posY = reviewPlaceY * size;
-        }
+        posY += (reviewCellSize + (reviewCellSpacing * 2)) * size;
 
 
-        state.canvas.drawText(size + " x", posX - cellSize, posY, textPaint);
-        posY -= cellSize - 5;
-        posX += cellSize;
+        state.canvas.drawText(size + " x", posX, posY, textPaint);
+
+        posY -= reviewCellSize - reviewCellSpacing;
+        posX += reviewCellSize * 2;
 
         Rect rect;
         for (int i = 0; i < number; i++) {
-            rect = new Rect(posX, posY, posX + cellSize, posY + cellSize);
+            rect = new Rect(posX, posY, posX + reviewCellSize, posY + reviewCellSize);
             state.canvas.drawRect(rect, previewPaint);
 
-            posX += cellSize + 5;
+            posX += reviewCellSize + reviewCellSpacing;
         }
     }
 
