@@ -10,10 +10,11 @@ import java.util.*;
  * To change this template use File | Settings | File Templates.
  */
 public class Ship {
-    private Deque<Cell> cells = new LinkedList<Cell>();
+    private Deque<Cell> cells = new LinkedList<>();
     private Direction direction;
 
     public static enum Direction {VERTICAL, HORIZONTAL}
+    private boolean impossible = true;
 
     public Ship(Deque<Cell> cells, Direction direction) {
         this.direction = direction;
@@ -45,4 +46,11 @@ public class Ship {
         return this.direction.equals(Direction.HORIZONTAL);
     }
 
+    public boolean isImpossible() {
+        return impossible;
+    }
+
+    public void setImpossible(boolean impossible) {
+        this.impossible = impossible;
+    }
 }

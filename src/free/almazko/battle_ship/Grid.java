@@ -6,6 +6,7 @@ import android.graphics.RectF;
 
 public class Grid {
 
+
     public class Properties {
         public int cellSpacing;
         public int cellSize;
@@ -16,7 +17,7 @@ public class Grid {
     private int numCells;
 
     private Canvas canvas;
-    private Properties properties;
+    public Properties properties;
 
     public Grid(Canvas canvas, int numCells, int size) {
         this.numCells = numCells;
@@ -46,6 +47,24 @@ public class Grid {
 
     public int size() {
         return size;
+    }
+
+
+
+    public void draw(Paint paint) {
+        int width = size;
+        int height = size;
+
+        float y = properties.cellOffset;
+        float x = properties.cellOffset;
+
+        float offset = (width - 2 * properties.cellOffset) / properties.cellSize;
+        for (byte i = 0; i <= properties.cellSize; i++) {
+            canvas.drawLine(properties.cellOffset, y, width, y, paint);
+            canvas.drawLine(x, 0, x, height, paint);
+            y += offset;
+            x += offset;
+        }
     }
 
     public Cell recognizeCell(float x, float y) {

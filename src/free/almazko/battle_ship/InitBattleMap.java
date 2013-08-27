@@ -1,15 +1,14 @@
 package free.almazko.battle_ship;
 
-import android.graphics.Paint;
-
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class BattleMap {
+public class InitBattleMap {
+
 
     public class Area {
-        public static final byte SIZE = BattleMap.SIZE;
+        public static final byte SIZE = InitBattleMap.SIZE;
         int[][] area = new int[Area.SIZE][Area.SIZE];
 
         public void set(int x, int y, int type) {
@@ -33,8 +32,10 @@ public class BattleMap {
     }
 
 
-    List<Ship> ships = new ArrayList<Ship>();
-    DrawBattleMap draw;
+    List<Ship> ships = new ArrayList<>();
+    Ship draftShip;
+
+    InitCanvas canvas;
 
     public static final int SIZE = 10;
     private Area area = new Area();
@@ -47,34 +48,43 @@ public class BattleMap {
 
     int[] avail_ships = new int[MAX_SHIP_SIZE + 1];
 
-    public BattleMap(DrawBattleMap draw) {
-        this.draw = draw;
+    public InitBattleMap(InitCanvas canvas) {
+        this.canvas = canvas;
 
         for (int i = 1; i <= MAX_SHIPS; i++) {
             avail_ships[i] = MAX_SHIPS + 1 - i;
         }
     }
 
-    public boolean addShip(Ship ship) {
+    public boolean addShip(final Ship ship) {
         if (!possibleAddShip(ship)) {
-            drawShips();
             return false;
         }
 
         avail_ships[ship.size()]--;
         ships.add(ship);
-        drawShips();
+
+        for (Cell cell : ship.getCells()) {
+            area.set(cell.x + 1, cell.y - 1, SHIPS_AREA);
+            area.set(cell.x + 1, cell.y, SHIPS_AREA);
+            area.set(cell.x + 1, cell.y + 1, SHIPS_AREA);
+            area.set(cell.x, cell.y - 1, SHIPS_AREA);
+            area.set(cell.x, cell.y + 1, SHIPS_AREA);
+            area.set(cell.x - 1, cell.y - 1, SHIPS_AREA);
+            area.set(cell.x - 1, cell.y, SHIPS_AREA);
+            area.set(cell.x - 1, cell.y + 1, SHIPS_AREA);
+        }
+
+        for (Cell cell : ship.getCells()) {
+            area.set(cell.x, cell.y, SHIP);
+        }
 
         return true;
     }
 
-    public boolean possibleAddShip(Ship ship) {
+    public boolean possibleAddShip(final Ship ship) {
 
-        if (avail_ships[ship.size()] == 0) {
-            return false;
-        }
-
-        return freeSpaceForShip(ship);
+        return avail_ships[ship.size()] != 0 && freeSpaceForShip(ship);
     }
 
     public boolean freeSpaceForShip(Ship ship) {
@@ -91,23 +101,28 @@ public class BattleMap {
 
     }
 
+    public Area getArea() {
+        return area;
+    }
+
+    public void commitDraftShip() {
+        addShip(draftShip);
+    }
+
+
     public void addDraftShip(Ship ship) {
-        drawShips();
 
         if (!freeSpaceForShip(ship)) {
             return;
         }
 
-        Paint paint;
         if (possibleAddShip(ship)) {
-            paint = DrawBattleMap.PAINT_DRAFT_SHIP;
+            ship.setImpossible(false);
         } else {
-            paint = DrawBattleMap.PAINT_WRONG_SHIP;
+            ship.setImpossible(true);
         }
 
-        for (Cell c : ship.getCells()) {
-            draw.drawCell(c, paint);
-        }
+        draftShip = ship;
     }
 
     public boolean isComplete() {
@@ -119,36 +134,22 @@ public class BattleMap {
     }
 
 
-    private void drawShips() {
+    private void draw(InitCanvas canvas) {
+
+        Grid grid = canvas.grid;
+
         for (int i = 1; i <= MAX_SHIPS; i++) {
-            draw.text(i, avail_ships[i]);
-        }
-
-        for (Ship ship : ships) {
-            for (Cell cell : ship.getCells()) {
-                area.set(cell.x + 1, cell.y - 1, SHIPS_AREA);
-                area.set(cell.x + 1, cell.y, SHIPS_AREA);
-                area.set(cell.x + 1, cell.y + 1, SHIPS_AREA);
-                area.set(cell.x, cell.y - 1, SHIPS_AREA);
-                area.set(cell.x, cell.y + 1, SHIPS_AREA);
-                area.set(cell.x - 1, cell.y - 1, SHIPS_AREA);
-                area.set(cell.x - 1, cell.y, SHIPS_AREA);
-                area.set(cell.x - 1, cell.y + 1, SHIPS_AREA);
-            }
-
-            for (Cell cell : ship.getCells()) {
-                area.set(cell.x, cell.y, SHIP);
-            }
+            canvas.drawText(i, avail_ships[i]);
         }
 
         for (int x = 0; x < Area.SIZE; x++) {
             for (int y = 0; y < Area.SIZE; y++) {
                 switch (area.get(x, y)) {
                     case SHIP:
-                        draw.drawCell(x, y, DrawBattleMap.PAINT_SHIP);
+                        grid.drawCell(x, y, DrawBattleMap.PAINT_SHIP);
                         break;
                     case SHIPS_AREA:
-                        draw.drawCell(x, y, DrawBattleMap.PAINT_SHIPS_AREA);
+                        grid.drawCell(x, y, DrawBattleMap.PAINT_SHIPS_AREA);
                         break;
                 }
             }
