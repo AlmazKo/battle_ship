@@ -24,7 +24,6 @@ public class DrawView extends View {
         // setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         setFocusable(true);
         setFocusableInTouchMode(true);
-
     }
 
     public void reDraw(MotionEvent event) {
@@ -37,6 +36,7 @@ public class DrawView extends View {
     public void onDraw(Canvas canvas) {
         if (initController == null) {
             initController = new InitController(canvas, this);
+            initController.onDraw(canvas);
             setOnTouchListener(initController);
         } else {
             initController.onDraw(canvas);

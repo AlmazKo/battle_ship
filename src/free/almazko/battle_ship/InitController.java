@@ -29,6 +29,7 @@ public class InitController implements View.OnTouchListener {
     public void onDraw(Canvas canvas) {
         this.canvas.update(canvas);
         this.canvas.drawGrid();
+        battleMap.draw(this.canvas);
     }
 
 
@@ -65,6 +66,7 @@ public class InitController implements View.OnTouchListener {
             }
 
             currentShip = ship;
+            battleMap.addDraftShip(currentShip);
 
         } else if (action == MotionEvent.ACTION_UP) {
             direction = null;

@@ -22,6 +22,7 @@ public class InitCanvas extends GridCanvas {
 
     public InitCanvas(Grid grid, Canvas canvas) {
         super(grid, canvas);
+        initVars();
     }
 
     public void drawText(int size, int number) {
@@ -64,7 +65,6 @@ public class InitCanvas extends GridCanvas {
 
     protected void initVars() {
         super.initVars();
-
         textPaint.setColor(0xFFFFFFFF);
         textPaint.setAntiAlias(true);
 

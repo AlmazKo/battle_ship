@@ -24,10 +24,8 @@ public class GridCanvas {
     public GridCanvas(Grid grid, Canvas canvas) {
         this.grid = grid;
         this.canvas = canvas;
-        initVars();
+
     }
-
-
 
     protected void initVars() {
 

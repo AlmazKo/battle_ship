@@ -58,8 +58,8 @@ public class Grid {
         float y = properties.cellOffset;
         float x = properties.cellOffset;
 
-        float offset = (width - 2 * properties.cellOffset) / properties.cellSize;
-        for (byte i = 0; i <= properties.cellSize; i++) {
+        float offset = (width - 2 * properties.cellOffset) / numCells;
+        for (byte i = 0; i <= numCells; i++) {
             canvas.drawLine(properties.cellOffset, y, width, y, paint);
             canvas.drawLine(x, 0, x, height, paint);
             y += offset;

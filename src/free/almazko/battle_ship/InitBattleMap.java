@@ -1,40 +1,15 @@
 package free.almazko.battle_ship;
 
+import android.graphics.Paint;
+
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class InitBattleMap {
 
-
-    public class Area {
-        public static final byte SIZE = InitBattleMap.SIZE;
-        int[][] area = new int[Area.SIZE][Area.SIZE];
-
-        public void set(int x, int y, int type) {
-            if (x >= 0 && x < SIZE && y >= 0 && y < SIZE) {
-                area[x][y] = type;
-            }
-        }
-
-        public int get(int x, int y) {
-
-            if (x >= 0 && x < SIZE && y >= 0 && y < SIZE) {
-                return area[x][y];
-            }
-
-            return -1;
-        }
-
-        public boolean isEmpty(int x, int y) {
-            return get(x, y) < 1;
-        }
-    }
-
-
     List<Ship> ships = new ArrayList<>();
     Ship draftShip;
-
     InitCanvas canvas;
 
     public static final int SIZE = 10;
@@ -106,7 +81,10 @@ public class InitBattleMap {
     }
 
     public void commitDraftShip() {
-        addShip(draftShip);
+        if (draftShip != null) {
+            addShip(draftShip);
+            draftShip = null;
+        }
     }
 
 
@@ -134,24 +112,40 @@ public class InitBattleMap {
     }
 
 
-    private void draw(InitCanvas canvas) {
-
-        Grid grid = canvas.grid;
+    public void draw(InitCanvas canvas) {
 
         for (int i = 1; i <= MAX_SHIPS; i++) {
             canvas.drawText(i, avail_ships[i]);
         }
 
+        drawDraftShip();
+
+        Grid grid = canvas.grid;
         for (int x = 0; x < Area.SIZE; x++) {
             for (int y = 0; y < Area.SIZE; y++) {
                 switch (area.get(x, y)) {
                     case SHIP:
-                        grid.drawCell(x, y, DrawBattleMap.PAINT_SHIP);
+                        grid.drawCell(x, y, InitCanvas.PAINT_SHIP);
                         break;
                     case SHIPS_AREA:
-                        grid.drawCell(x, y, DrawBattleMap.PAINT_SHIPS_AREA);
+                        grid.drawCell(x, y, InitCanvas.PAINT_SHIPS_AREA);
                         break;
                 }
+            }
+        }
+    }
+
+    public void drawDraftShip() {
+        if (draftShip != null) {
+            Paint paint;
+            if (draftShip.isImpossible()) {
+                paint = InitCanvas.PAINT_WRONG_SHIP;
+            } else {
+                paint = InitCanvas.PAINT_DRAFT_SHIP;
+            }
+
+            for (Cell cell : draftShip.getCells()) {
+                canvas.grid.drawCell(cell, paint);
             }
         }
     }
