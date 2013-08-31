@@ -6,7 +6,6 @@ import android.graphics.RectF;
 
 public class Grid {
 
-
     public class Properties {
         public int cellSpacing;
         public int cellSize;
@@ -15,6 +14,7 @@ public class Grid {
 
     private int size;
     private int numCells;
+    private int top = 0, left = 0;
 
     private Canvas canvas;
     public Properties properties;
@@ -31,6 +31,11 @@ public class Grid {
         this.canvas = canvas;
         size = Math.min(canvas.getHeight(), canvas.getWidth());
         initVars(canvas);
+    }
+
+    public void setPosition(int top, int left) {
+        this.top = top;
+        this.left = left;
     }
 
     private void initVars(Canvas canvas) {
@@ -50,18 +55,17 @@ public class Grid {
     }
 
 
-
     public void draw(Paint paint) {
         int width = size;
         int height = size;
 
-        float y = properties.cellOffset;
-        float x = properties.cellOffset;
+        float y = left + properties.cellOffset;
+        float x = left + properties.cellOffset;
 
         float offset = (width - 2 * properties.cellOffset) / numCells;
         for (byte i = 0; i <= numCells; i++) {
-            canvas.drawLine(properties.cellOffset, y, width, y, paint);
-            canvas.drawLine(x, 0, x, height, paint);
+            canvas.drawLine(properties.cellOffset, y, width, y, paint);  //horizontal
+            canvas.drawLine(x, top, x, height, paint);                     //vertical
             y += offset;
             x += offset;
         }
@@ -71,7 +75,7 @@ public class Grid {
         int cellX = (int) Math.floor(x / properties.cellSize);
         int cellY = (int) Math.floor(y / properties.cellSize);
 
-        if (cellX >= size || cellY >= size) {
+        if (cellX >= numCells || cellY >= numCells) {
             return null;
         }
 

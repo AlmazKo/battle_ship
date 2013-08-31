@@ -26,8 +26,7 @@ public class DrawView extends View {
         setFocusableInTouchMode(true);
     }
 
-    public void reDraw(MotionEvent event) {
-        this.event = event;
+    public void reDraw() {
         invalidate();
     }
 

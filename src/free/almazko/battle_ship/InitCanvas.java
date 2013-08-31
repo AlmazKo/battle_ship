@@ -4,14 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 
-/**
- * Created with IntelliJ IDEA.
- * User: almaz
- * Date: 8/27/13
- * Time: 9:48 PM
- * To change this template use File | Settings | File Templates.
- */
-public class InitCanvas extends GridCanvas {
+public class InitCanvas  {
 
     protected int reviewPlaceX, reviewPlaceY;
     protected int reviewCellSpacing;
@@ -19,9 +12,13 @@ public class InitCanvas extends GridCanvas {
 
     protected Paint textPaint = new Paint();
     protected Paint previewPaint = new Paint();
+    protected Grid grid;
+    protected Canvas canvas;
 
     public InitCanvas(Grid grid, Canvas canvas) {
-        super(grid, canvas);
+        this.grid = grid;
+        this.canvas = canvas;
+
         initVars();
     }
 
@@ -54,17 +51,12 @@ public class InitCanvas extends GridCanvas {
         }
     }
 
-    public void drawGrid() {
-        grid.draw(linePaint);
-    }
-
     public void update(Canvas canvas) {
         this.canvas = canvas;
         grid.changeCanvas(canvas);
     }
 
     protected void initVars() {
-        super.initVars();
         textPaint.setColor(0xFFFFFFFF);
         textPaint.setAntiAlias(true);
 
@@ -86,4 +78,7 @@ public class InitCanvas extends GridCanvas {
         return canvas.getWidth() < canvas.getHeight();
     }
 
+    public void drawGrid() {
+        grid.draw(Styles.get("grid_line"));
+    }
 }

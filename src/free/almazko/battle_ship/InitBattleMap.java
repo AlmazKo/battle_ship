@@ -125,10 +125,10 @@ public class InitBattleMap {
             for (int y = 0; y < Area.SIZE; y++) {
                 switch (area.get(x, y)) {
                     case SHIP:
-                        grid.drawCell(x, y, InitCanvas.PAINT_SHIP);
+                        grid.drawCell(x, y, Styles.get("ship"));
                         break;
                     case SHIPS_AREA:
-                        grid.drawCell(x, y, InitCanvas.PAINT_SHIPS_AREA);
+                        grid.drawCell(x, y, Styles.get("ships_area"));
                         break;
                 }
             }
@@ -139,9 +139,9 @@ public class InitBattleMap {
         if (draftShip != null) {
             Paint paint;
             if (draftShip.isImpossible()) {
-                paint = InitCanvas.PAINT_WRONG_SHIP;
+                paint =  Styles.get("wrong_ship");
             } else {
-                paint = InitCanvas.PAINT_DRAFT_SHIP;
+                paint = Styles.get("draft_ship");
             }
 
             for (Cell cell : draftShip.getCells()) {

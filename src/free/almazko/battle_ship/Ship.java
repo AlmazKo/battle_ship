@@ -14,6 +14,7 @@ public class Ship {
     private Direction direction;
 
     public static enum Direction {VERTICAL, HORIZONTAL}
+
     private boolean impossible = true;
 
     public Ship(Deque<Cell> cells, Direction direction) {
@@ -52,5 +53,23 @@ public class Ship {
 
     public void setImpossible(boolean impossible) {
         this.impossible = impossible;
+    }
+
+    public boolean equals(Ship ship) {
+        if (ship.size() != size()) {
+            return false;
+        }
+
+        Cell[] current = cells.toArray(new Cell[size()]);
+        Cell[] other = ship.getCells().toArray(new Cell[ship.size()]);
+
+        for (int i = 0; i < size(); i++) {
+            if (!current[i].equals(other[i])) {
+                return false;
+            }
+        }
+
+        return true;
+//        return cells.equals(ship.getCells());
     }
 }

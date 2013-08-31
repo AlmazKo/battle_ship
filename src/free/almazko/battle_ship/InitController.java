@@ -14,6 +14,7 @@ public class InitController implements View.OnTouchListener {
 
     private Direction direction;
     private Ship currentShip;
+    private Cell lastCell = new Cell(-1,-1);
     private InitCanvas canvas;
     private InitBattleMap battleMap;
     private DrawView parentView;
@@ -47,8 +48,7 @@ public class InitController implements View.OnTouchListener {
             if (action == MotionEvent.ACTION_DOWN) {
                 ship = new Ship(cell);
             } else {
-                Cell last = currentShip.getCells().getLast();
-                if (cell.equals(last)) {
+                if (lastCell.equals(cell)) {
                     return false;
                 }
 
@@ -59,6 +59,10 @@ public class InitController implements View.OnTouchListener {
                     }
                 }
                 ship = recognizeShip(cell);
+
+                if (battleMap.draftShip.equals(ship)) {
+                    return false;
+                }
             }
 
             if (!battleMap.freeSpaceForShip(ship)) {
@@ -73,7 +77,7 @@ public class InitController implements View.OnTouchListener {
             battleMap.commitDraftShip();
         }
 
-        parentView.reDraw(event);
+        parentView.reDraw();
 
         return true;
     }
