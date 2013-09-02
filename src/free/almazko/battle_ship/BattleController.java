@@ -39,7 +39,18 @@ public class BattleController extends AbstractController {
         this.battleMap.draw();
 
         if (!battleMap.isProtagonist()) {
-            battleMap.strike(opponent.makeMove());
+            BattleMap.StrikeResult result = battleMap.strike(opponent.makeMove());
+
+            if (result == BattleMap.StrikeResult.HIT) {
+                parentView.getVibrator().vibrate(200);
+            }
+
+            if (result == BattleMap.StrikeResult.KILL) {
+                long[] signal= {100, 200, 300, 200};
+                parentView.getVibrator().vibrate(signal, -1);
+            }
+
+
             parentView.reDraw();
         }
 
