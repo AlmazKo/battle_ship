@@ -23,7 +23,7 @@ public class BattleController extends AbstractController {
 
         opponentsGrid = new Grid(canvas, Area.SIZE);
 
-        playersGrid = new Grid(canvas, Area.SIZE, 400);
+        playersGrid = new Grid(canvas, Area.SIZE, 300);
         playersGrid.setPosition(opponentsGrid.size() + 50, 50);
 
 

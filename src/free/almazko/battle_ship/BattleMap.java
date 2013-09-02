@@ -33,7 +33,7 @@ public class BattleMap {
     }
 
     public void draw() {
-        drawShips(playersArea, canvas.playersGrid);
+        drawProtagonistShips(playersArea, canvas.playersGrid);
         drawShips(opponentsArea, canvas.opponentsGrid);
     }
 
@@ -54,6 +54,28 @@ public class BattleMap {
                         grid.drawCell(x, y, Styles.get("fared_area"));
                     } else {
                         grid.drawCell(x, y, Styles.get("ships_area"));
+                    }
+                }
+            }
+        }
+    }
+    private void drawProtagonistShips(Area area, Grid grid) {
+        for (int x = 0; x < Area.SIZE; x++) {
+            for (int y = 0; y < Area.SIZE; y++) {
+                int target = area.get(x, y);
+
+
+                if ((target & Area.SHIP) > 0) {
+                    if ((target & Area.FIRED) > 0) {
+                        grid.drawCell(x, y, Styles.get("mini_wrong_ship"));
+                    } else {
+                        grid.drawCell(x, y, Styles.get("mini_ship"));
+                    }
+                } else {
+                    if ((target & Area.FIRED) > 0) {
+                        grid.drawCell(x, y, Styles.get("mini_fared_area"));
+                    } else {
+                        grid.drawCell(x, y, Styles.get("mini_ships_area"));
                     }
                 }
             }

@@ -59,6 +59,16 @@ public class Grid {
     public void draw(Paint paint) {
         properties.update(paint);
 
+        for (byte i = 0; i < numCells; i++) {
+            for (byte j = 0; j < numCells; j++) {
+                drawCell(i, j, Styles.get("cell_blank"));
+            }
+        }
+    }
+
+    public void drawByLine(Paint paint) {
+        properties.update(paint);
+
         int width = size;
         int height = size;
 
