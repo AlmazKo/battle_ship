@@ -21,6 +21,13 @@ public class Styles {
         styles.put("ships_area", paint);
 
         paint = new Paint();
+        paint.setStyle(Paint.Style.FILL);
+        paint.setColor(0xFFFFFF66);
+
+        styles.put("fared_area", paint);
+
+
+        paint = new Paint();
         paint.setColor(0xFF53A2F8);
         paint.setAntiAlias(true);
         paint.setStyle(Paint.Style.FILL);
@@ -45,15 +52,23 @@ public class Styles {
         styles.put("wrong_ship", paint);
 
         paint = new Paint();
-        paint.setColor(0xFF001327);
+        paint.setColor(0xFF003366);
+//        paint.setColor(0xFFFF0000);
         paint.setAntiAlias(true);
-        paint.setStrokeWidth(5);
+        paint.setStrokeWidth(11);
 
         styles.put("grid_line", paint);
 
-        defaultStyle = new Paint();
+
         paint = new Paint();
-        paint.setColor(0xFFFFFFFF);
+        paint.setColor(0xFF003366);
+        paint.setAntiAlias(true);
+        paint.setStrokeWidth(1);
+
+        styles.put("mini_grid_line", paint);
+
+        defaultStyle = new Paint();
+        defaultStyle.setColor(0xFFFFFFFF);
     }
 
     public static Paint get(String name) {

@@ -10,22 +10,15 @@ public class InitBattleMap {
 
     List<Ship> ships = new ArrayList<>();
     Ship draftShip;
-    InitCanvas canvas;
 
     public static final int SIZE = 10;
     private Area area = new Area();
-    private static final int EMPTY = 0b0;
-    private static final int SHIP = 0b01;
-    private static final int SHIPS_AREA = 0b10;
     private static final int MAX_SHIPS = 4;
     private static final int MAX_SHIP_SIZE = MAX_SHIPS;
 
-
     int[] avail_ships = new int[MAX_SHIP_SIZE + 1];
 
-    public InitBattleMap(InitCanvas canvas) {
-        this.canvas = canvas;
-
+    public InitBattleMap() {
         for (int i = 1; i <= MAX_SHIPS; i++) {
             avail_ships[i] = MAX_SHIPS + 1 - i;
         }
@@ -40,18 +33,18 @@ public class InitBattleMap {
         ships.add(ship);
 
         for (Cell cell : ship.getCells()) {
-            area.set(cell.x + 1, cell.y - 1, SHIPS_AREA);
-            area.set(cell.x + 1, cell.y, SHIPS_AREA);
-            area.set(cell.x + 1, cell.y + 1, SHIPS_AREA);
-            area.set(cell.x, cell.y - 1, SHIPS_AREA);
-            area.set(cell.x, cell.y + 1, SHIPS_AREA);
-            area.set(cell.x - 1, cell.y - 1, SHIPS_AREA);
-            area.set(cell.x - 1, cell.y, SHIPS_AREA);
-            area.set(cell.x - 1, cell.y + 1, SHIPS_AREA);
+            area.set(cell.x + 1, cell.y - 1, Area.SHIPS_AREA);
+            area.set(cell.x + 1, cell.y, Area.SHIPS_AREA);
+            area.set(cell.x + 1, cell.y + 1, Area.SHIPS_AREA);
+            area.set(cell.x, cell.y - 1, Area.SHIPS_AREA);
+            area.set(cell.x, cell.y + 1, Area.SHIPS_AREA);
+            area.set(cell.x - 1, cell.y - 1, Area.SHIPS_AREA);
+            area.set(cell.x - 1, cell.y, Area.SHIPS_AREA);
+            area.set(cell.x - 1, cell.y + 1, Area.SHIPS_AREA);
         }
 
         for (Cell cell : ship.getCells()) {
-            area.set(cell.x, cell.y, SHIP);
+            area.set(cell.x, cell.y, Area.SHIP);
         }
 
         return true;
@@ -118,16 +111,16 @@ public class InitBattleMap {
             canvas.drawText(i, avail_ships[i]);
         }
 
-        drawDraftShip();
+        drawDraftShip(canvas);
 
         Grid grid = canvas.grid;
         for (int x = 0; x < Area.SIZE; x++) {
             for (int y = 0; y < Area.SIZE; y++) {
                 switch (area.get(x, y)) {
-                    case SHIP:
+                    case Area.SHIP:
                         grid.drawCell(x, y, Styles.get("ship"));
                         break;
-                    case SHIPS_AREA:
+                    case Area.SHIPS_AREA:
                         grid.drawCell(x, y, Styles.get("ships_area"));
                         break;
                 }
@@ -135,7 +128,7 @@ public class InitBattleMap {
         }
     }
 
-    public void drawDraftShip() {
+    public void drawDraftShip(InitCanvas canvas) {
         if (draftShip != null) {
             Paint paint;
             if (draftShip.isImpossible()) {

@@ -6,10 +6,18 @@ import android.graphics.RectF;
 
 public class Grid {
 
+    private Paint lastPaint = new Paint();
+
     public class Properties {
-        public int cellSpacing;
+        public float cellSpacing;
         public int cellSize;
         public float cellOffset;
+
+        void update(Paint paint) {
+            cellSpacing = paint.getStrokeWidth();
+            cellSize = size / numCells;
+            cellOffset = (float) Math.floor(properties.cellSpacing / 2);
+        }
     }
 
     private int size;
@@ -17,20 +25,19 @@ public class Grid {
     private int top = 0, left = 0;
 
     private Canvas canvas;
-    public Properties properties;
+    public Properties properties = new Properties();
 
     public Grid(Canvas canvas, int numCells, int size) {
         this.numCells = numCells;
         this.size = size;
         this.canvas = canvas;
-        initVars(canvas);
     }
 
     public Grid(Canvas canvas, int numCells) {
         this.numCells = numCells;
         this.canvas = canvas;
         size = Math.min(canvas.getHeight(), canvas.getWidth());
-        initVars(canvas);
+
     }
 
     public void setPosition(int top, int left) {
@@ -38,16 +45,10 @@ public class Grid {
         this.left = left;
     }
 
-    private void initVars(Canvas canvas) {
-        properties = new Properties();
-        properties.cellSize = size / numCells;
-        properties.cellSpacing = 3;
-        properties.cellOffset = (float) Math.floor(properties.cellSpacing / 2);
-    }
 
     public void changeCanvas(Canvas canvas) {
         this.canvas = canvas;
-        initVars(canvas);
+
     }
 
     public int size() {
@@ -56,22 +57,35 @@ public class Grid {
 
 
     public void draw(Paint paint) {
+        properties.update(paint);
+
         int width = size;
         int height = size;
 
-        float y = left + properties.cellOffset;
-        float x = left + properties.cellOffset;
+        float y = top;
+        float x = left;
 
+        float leftInit = x;
+        float leftEnd = x + width;
+
+        float topInit = y;
+        float topEnd = y + height;
         float offset = (width - 2 * properties.cellOffset) / numCells;
+
+        x += properties.cellOffset;
+        y += properties.cellOffset;
         for (byte i = 0; i <= numCells; i++) {
-            canvas.drawLine(properties.cellOffset, y, width, y, paint);  //horizontal
-            canvas.drawLine(x, top, x, height, paint);                     //vertical
+
+            canvas.drawLine(leftInit, y, leftEnd, y, paint);  //horizontal
+            canvas.drawLine(x, topInit, x, topEnd, paint);  //vertical
+
             y += offset;
             x += offset;
         }
     }
 
     public Cell recognizeCell(float x, float y) {
+
         int cellX = (int) Math.floor(x / properties.cellSize);
         int cellY = (int) Math.floor(y / properties.cellSize);
 
@@ -93,9 +107,10 @@ public class Grid {
     }
 
     public RectF makeRect(int x, int y) {
-        float offset = (properties.cellSize * numCells - 2 * properties.cellOffset) / numCells;
-        float posX = properties.cellSpacing - 1 + x * offset;
-        float posY = properties.cellSpacing - 1 + y * offset;
+
+        float offset = (size - 2 * properties.cellOffset) / numCells;
+        float posX = left + properties.cellSpacing - 1 + x * offset;
+        float posY = top + properties.cellSpacing - 1 + y * offset;
 
         return new RectF(
                 posX, posY,

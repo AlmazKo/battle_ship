@@ -8,13 +8,13 @@ import android.view.View;
 import java.util.Deque;
 import java.util.LinkedList;
 
-public class InitController implements View.OnTouchListener {
+public class InitController extends AbstractController {
 
     private enum Direction {VERTICAL, HORIZONTAL}
 
     private Direction direction;
     private Ship currentShip;
-    private Cell lastCell = new Cell(-1,-1);
+    private Cell lastCell = new Cell(-1, -1);
     private InitCanvas canvas;
     private InitBattleMap battleMap;
     private DrawView parentView;
@@ -24,13 +24,24 @@ public class InitController implements View.OnTouchListener {
         grid = new Grid(canvas, InitBattleMap.SIZE);
         this.canvas = new InitCanvas(grid, canvas);
         this.parentView = parentView;
-        battleMap = new InitBattleMap(this.canvas);
+        battleMap = new InitBattleMap();
+
     }
 
     public void onDraw(Canvas canvas) {
         this.canvas.update(canvas);
         this.canvas.drawGrid();
         battleMap.draw(this.canvas);
+
+
+        if (battleMap.isComplete()) {
+            Area playersArea = battleMap.getArea();
+
+            Area opponentArea = playersArea.cloneArea();
+            BattleController battleController = new BattleController(canvas, parentView, playersArea, opponentArea);
+
+            parentView.setController(battleController);
+        }
     }
 
 
@@ -47,10 +58,13 @@ public class InitController implements View.OnTouchListener {
             Ship ship;
             if (action == MotionEvent.ACTION_DOWN) {
                 ship = new Ship(cell);
+                lastCell = cell;
             } else {
                 if (lastCell.equals(cell)) {
                     return false;
                 }
+
+                lastCell = cell;
 
                 if (direction == null) {
                     direction = recognizeDirection(cell);

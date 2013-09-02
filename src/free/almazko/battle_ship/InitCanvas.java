@@ -22,7 +22,7 @@ public class InitCanvas  {
         initVars();
     }
 
-    public void drawText(int size, int number) {
+    public void drawText(int shipSize, int numberAvailShips) {
 
         if (isVertical()) {
             reviewPlaceX = 10;
@@ -34,16 +34,16 @@ public class InitCanvas  {
 
         int posX = reviewPlaceX, posY = reviewPlaceY;
 
-        posY += (reviewCellSize + (reviewCellSpacing * 2)) * size;
+        posY += (reviewCellSize + (reviewCellSpacing * 2)) * shipSize;
 
 
-        canvas.drawText(size + " x", posX, posY, textPaint);
+        canvas.drawText(shipSize + " x", posX, posY, textPaint);
 
         posY -= reviewCellSize - reviewCellSpacing;
         posX += reviewCellSize * 2;
 
         Rect rect;
-        for (int i = 0; i < number; i++) {
+        for (int i = 0; i < numberAvailShips; i++) {
             rect = new Rect(posX, posY, posX + reviewCellSize, posY + reviewCellSize);
             canvas.drawRect(rect, previewPaint);
 

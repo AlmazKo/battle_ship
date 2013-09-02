@@ -2,21 +2,12 @@ package free.almazko.battle_ship;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.view.MotionEvent;
 import android.view.View;
 
 public class DrawView extends View {
     private static final String TAG = "DrawView";
 
-    private enum State {DRAFT, COMPLETE_SHIP, COMPLETE_ALL}
-
-    private enum Direction {VERTICAL, HORIZONTAL}
-
-    private State state = State.DRAFT;
-    private Direction direction;
-
-    MotionEvent event;
-    InitController initController;
+    AbstractController controller;
 
     public DrawView(Context context) {
         super(context);
@@ -30,15 +21,20 @@ public class DrawView extends View {
         invalidate();
     }
 
+    public void setController(AbstractController controller) {
+        this.controller = controller;
+        setOnTouchListener(controller);
+        reDraw();
+    }
 
     @Override
     public void onDraw(Canvas canvas) {
-        if (initController == null) {
-            initController = new InitController(canvas, this);
-            initController.onDraw(canvas);
-            setOnTouchListener(initController);
+        if (controller == null) {
+            controller = new InitController(canvas, this);
+            controller.onDraw(canvas);
+            setOnTouchListener(controller);
         } else {
-            initController.onDraw(canvas);
+            controller.onDraw(canvas);
         }
 
     }
