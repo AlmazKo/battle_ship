@@ -35,6 +35,8 @@ public class InitController extends AbstractController {
 
 
         if (battleMap.isComplete()) {
+
+            parentView.getVibrator().vibrate(1000);
             Area playersArea = battleMap.getArea();
 
             Area opponentArea = playersArea.cloneArea();
