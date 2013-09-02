@@ -20,6 +20,9 @@ public class MyActivity extends Activity
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         drawView = new DrawView(this);
+
+        int gridOffset = getResources().getInteger(R.integer.grid_offset);
+        drawView.setGridOffset(gridOffset);
         setContentView(drawView);
         drawView.requestFocus();
     }

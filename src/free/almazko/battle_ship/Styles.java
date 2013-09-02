@@ -11,8 +11,14 @@ public class Styles {
     private static Paint defaultStyle;
 
     static {
+        defaultStyle = new Paint();
+        defaultStyle.setColor(0xFFFFFFFF);
+    }
+
+
+    public static void fill(int gridCellOffset) {
         Paint paint;
-        int blurSize = 5;
+        int blurSize = gridCellOffset;
 
         paint = new Paint();
         paint.setStyle(Paint.Style.FILL);
@@ -55,7 +61,7 @@ public class Styles {
         paint.setColor(0xFF003366);
 //        paint.setColor(0xFFFF0000);
         paint.setAntiAlias(true);
-        paint.setStrokeWidth(11);
+        paint.setStrokeWidth(gridCellOffset);
 
         styles.put("grid_line", paint);
 
@@ -66,9 +72,6 @@ public class Styles {
         paint.setStrokeWidth(1);
 
         styles.put("mini_grid_line", paint);
-
-        defaultStyle = new Paint();
-        defaultStyle.setColor(0xFFFFFFFF);
     }
 
     public static Paint get(String name) {

@@ -20,6 +20,9 @@ public class DrawView extends View {
         vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
     }
 
+    public void setGridOffset(int gridCellOffset) {
+        Styles.fill(gridCellOffset);
+    }
 
     public Vibrator getVibrator() {
         return vibrator;
