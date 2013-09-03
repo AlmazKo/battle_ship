@@ -14,42 +14,33 @@ import android.view.View;
 public class BattleController extends AbstractController {
 
     private DrawView parentView;
-    private BattleCanvas canvas;
-    private Grid playersGrid, opponentsGrid;
-    BattleMap battleMap;
+    private BattleCanvas gameCanvas;
+    private Game game;
+
+    private Area knownArea = new Area();
     Opponent opponent = new Opponent();
 
     public BattleController(Canvas canvas, DrawView parentView, Area playersArea, Area opponentsArea) {
 
-        opponentsGrid = new Grid(canvas, Area.SIZE);
-
-        playersGrid = new Grid(canvas, Area.SIZE, 300);
-        playersGrid.setPosition(opponentsGrid.size() + 50, 50);
-
-
-        this.canvas = new BattleCanvas(canvas, playersGrid, opponentsGrid);
         this.parentView = parentView;
-        battleMap = new BattleMap(this.canvas, playersArea, opponentsArea);
+        this.gameCanvas = new BattleCanvas(canvas);
+        game = new Game(playersArea, opponentsArea);
     }
 
     public void onDraw(Canvas canvas) {
 
-        this.canvas.update(canvas);
-        this.canvas.drawGrids();
-        this.battleMap.draw();
+        this.gameCanvas.update(canvas, game.getProtagonistArea(), knownArea);
 
-        if (!battleMap.isProtagonist()) {
-            BattleMap.StrikeResult result = battleMap.strike(opponent.makeMove());
+        if (!game.isProtagonist()) {
+            Game.StrikeResult result = game.strike(opponent.makeMove());
 
-            if (result == BattleMap.StrikeResult.HIT) {
+            if (result == Game.StrikeResult.HIT) {
                 parentView.getVibrator().vibrate(200);
             }
 
-            if (result == BattleMap.StrikeResult.KILL) {
-                long[] signal= {100, 200, 300, 200};
-                parentView.getVibrator().vibrate(signal, -1);
+            if (result == Game.StrikeResult.KILL) {
+                parentView.getVibrator().vibrate(400);
             }
-
 
             parentView.reDraw();
         }
@@ -58,19 +49,33 @@ public class BattleController extends AbstractController {
 
     public boolean onTouch(View v, MotionEvent event) {
 
-        if (!battleMap.isProtagonist()) {
+        if (!game.isProtagonist()) {
             return false;
         }
 
         int action = event.getAction();
 
         if (action == MotionEvent.ACTION_DOWN) {
-            Cell cell = opponentsGrid.recognizeCell(event.getX(), event.getY());
-            BattleMap.StrikeResult result = battleMap.strike(cell);
+            Cell cell = gameCanvas.recognizeOpponentCell(event.getX(), event.getY());
+            if (cell == null) {
+                return false;
+            }
+
+            Game.StrikeResult result = game.strike(cell);
+
+            if (result != Game.StrikeResult.ALREADY) {
+
+                byte areaFlags = Area.FIRED;
+
+                if (result.equals(Game.StrikeResult.HIT) || result.equals(Game.StrikeResult.KILL)) {
+                    areaFlags += Area.SHIP;
+                }
+
+                knownArea.set(cell.x, cell.y, areaFlags);
+            }
         }
 
-
         parentView.reDraw();
-        return true;  //To change body of implemented methods use File | Settings | File Templates.
+        return true;
     }
 }

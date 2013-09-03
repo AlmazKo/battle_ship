@@ -14,12 +14,16 @@ public class Opponent {
     Cell move = new Cell(0, 0);
     Area area = new Area();
     Random random = new Random();
-
+    Game.StrikeResult result;
     public Cell makeMove() {
 
         move.x = random.nextInt(Area.SIZE);
         move.y = random.nextInt(Area.SIZE);
 
         return move;
+    }
+
+    public void setResult(Game.StrikeResult result) {
+         result = result;
     }
 }

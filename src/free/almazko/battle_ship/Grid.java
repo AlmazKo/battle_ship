@@ -16,7 +16,13 @@ public class Grid {
         void update(Paint paint) {
             cellSpacing = paint.getStrokeWidth();
             cellSize = size / numCells;
-            cellOffset = (float) Math.floor(properties.cellSpacing / 2);
+            cellOffset = (float) Math.floor(this.cellSpacing / 2);
+        }
+
+        void update(int cellSpacing) {
+            this.cellSpacing = cellSpacing;
+            cellSize = size / numCells;
+            cellOffset = (float) Math.floor(this.cellSpacing / 2);
         }
     }
 
@@ -40,11 +46,18 @@ public class Grid {
 
     }
 
-    public void setPosition(int top, int left) {
+    public void setPosition(int left, int top) {
         this.top = top;
         this.left = left;
     }
 
+    public void setSize(int size){
+        this.size = size;
+    }
+
+    public void setCellSpacing(int cellSpacing){
+        properties.update(cellSpacing);
+    }
 
     public void changeCanvas(Canvas canvas) {
         this.canvas = canvas;
@@ -96,10 +109,10 @@ public class Grid {
 
     public Cell recognizeCell(float x, float y) {
 
-        int cellX = (int) Math.floor(x / properties.cellSize);
-        int cellY = (int) Math.floor(y / properties.cellSize);
+        int cellX = (int) Math.floor((x - left) / properties.cellSize);
+        int cellY = (int) Math.floor((y - top) / properties.cellSize);
 
-        if (cellX >= numCells || cellY >= numCells) {
+        if (cellX >= numCells || cellY >= numCells || cellX < 0 || cellY < 0) {
             return null;
         }
 
@@ -118,7 +131,7 @@ public class Grid {
 
     public RectF makeRect(int x, int y) {
 
-        float offset = (size - 2 * properties.cellOffset) / numCells;
+        float offset = Math.round((size - 2 * properties.cellOffset) / numCells);
         float posX = left + properties.cellSpacing - 1 + x * offset;
         float posY = top + properties.cellSpacing - 1 + y * offset;
 

@@ -26,9 +26,9 @@ public class InitCanvas  {
 
         if (isVertical()) {
             reviewPlaceX = 10;
-            reviewPlaceY = grid.size() + fontSize;
+            reviewPlaceY = fontSize;
         } else {
-            reviewPlaceX = grid.size() + fontSize;
+            reviewPlaceX = fontSize;
             reviewPlaceY = 10;
         }
 
@@ -54,6 +54,8 @@ public class InitCanvas  {
     public void update(Canvas canvas) {
         this.canvas = canvas;
         grid.changeCanvas(canvas);
+
+        canvas.drawText("Расстановка кораблей", 150, 50, Styles.get("text_title"));
     }
 
     protected void initVars() {
@@ -78,7 +80,4 @@ public class InitCanvas  {
         return canvas.getWidth() < canvas.getHeight();
     }
 
-    public void drawGrid() {
-        grid.draw(Styles.get("grid_line"));
-    }
 }

@@ -123,6 +123,8 @@ public class InitBattleMap {
                     case Area.SHIPS_AREA:
                         grid.drawCell(x, y, Styles.get("ships_area"));
                         break;
+                    default:
+                        grid.drawCell(x, y, Styles.get("cell_blank"));
                 }
             }
         }

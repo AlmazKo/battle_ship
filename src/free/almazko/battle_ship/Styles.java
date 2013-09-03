@@ -1,6 +1,7 @@
 package free.almazko.battle_ship;
 
 import android.graphics.Paint;
+import android.graphics.Typeface;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,6 +10,7 @@ public class Styles {
 
     private static Map<String, Paint> styles = new HashMap<>();
     private static Paint defaultStyle;
+    public static int gridCellOffset;
 
     static {
         defaultStyle = new Paint();
@@ -17,6 +19,9 @@ public class Styles {
 
 
     public static void fill(int gridCellOffset) {
+
+        Styles.gridCellOffset = gridCellOffset;
+
         Paint paint;
         int blurSize = gridCellOffset;
 
@@ -81,7 +86,6 @@ public class Styles {
         paint.setColor(0xFF022244);
         paint.setAntiAlias(true);
         paint.setStyle(Paint.Style.FILL);
-        paint.setStyle(Paint.Style.FILL);
         styles.put("mini_ships_area", paint);
 
         paint = new Paint();
@@ -97,11 +101,19 @@ public class Styles {
         styles.put("mini_grid_line", paint);
 
         paint = new Paint();
-        paint.setColor(0xFF2a52be);
+        paint.setColor(0xFF008cf0);
         paint.setAntiAlias(true);
         paint.setStrokeWidth(1);
         paint.setStyle(Paint.Style.STROKE);
         styles.put("cell_blank", paint);
+
+        Typeface tf = Typeface.create("Helvetica",Typeface.ITALIC);
+        paint = new Paint();
+        paint.setColor(0xFF42aaff);
+        paint.setAntiAlias(true);
+        paint.setTextSize(gridCellOffset * 4);
+        paint.setTypeface(tf);
+        styles.put("text_title", paint);
     }
 
     public static Paint get(String name) {

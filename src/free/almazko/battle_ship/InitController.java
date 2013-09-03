@@ -22,6 +22,8 @@ public class InitController extends AbstractController {
 
     public InitController(Canvas canvas, DrawView parentView) {
         grid = new Grid(canvas, InitBattleMap.SIZE);
+        grid.setPosition(0, 90);
+        grid.setCellSpacing(Styles.gridCellOffset);
         this.canvas = new InitCanvas(grid, canvas);
         this.parentView = parentView;
         battleMap = new InitBattleMap();
@@ -30,13 +32,12 @@ public class InitController extends AbstractController {
 
     public void onDraw(Canvas canvas) {
         this.canvas.update(canvas);
-        this.canvas.drawGrid();
         battleMap.draw(this.canvas);
 
 
         if (battleMap.isComplete()) {
 
-            parentView.getVibrator().vibrate(1000);
+            parentView.getVibrator().vibrate(800);
             Area playersArea = battleMap.getArea();
 
             Area opponentArea = playersArea.cloneArea();
