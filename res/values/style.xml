@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="preview">
+        <item name="android:textSize">10dp</item>
+        <item name="android:textColor">#42aaff</item>
+        <item name="android:typeface">monospace</item>
+    </style>
+
+    <style  name="h1">
+        <item name="android:textSize">18dp</item>
+        <item name="android:textColor">#ffffff</item>
+                <item name="android:textStyle">bold</item>
+    </style>
+</resources>
