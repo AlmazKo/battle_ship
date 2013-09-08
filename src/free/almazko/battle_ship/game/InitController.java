@@ -1,9 +1,10 @@
-package free.almazko.battle_ship;
+package free.almazko.battle_ship.game;
 
 
 import android.graphics.Canvas;
 import android.view.MotionEvent;
 import android.view.View;
+import free.almazko.battle_ship.GameView;
 
 import java.util.Deque;
 import java.util.LinkedList;
@@ -17,10 +18,10 @@ public class InitController extends AbstractController {
     private Cell lastCell = new Cell(-1, -1);
     private InitCanvas canvas;
     private InitBattleMap battleMap;
-    private DrawView parentView;
+    private GameView parentView;
     private Grid grid;
 
-    public InitController(Canvas canvas, DrawView parentView) {
+    public InitController(Canvas canvas, GameView parentView) {
         grid = new Grid(canvas, InitBattleMap.SIZE);
         grid.setPosition(0, 90);
         grid.setCellSpacing(Styles.gridCellOffset);

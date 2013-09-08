@@ -1,4 +1,4 @@
-package free.almazko.battle_ship;
+package free.almazko.battle_ship.game;
 
 import java.util.Random;
 

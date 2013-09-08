@@ -1,4 +1,4 @@
-package free.almazko.battle_ship;
+package free.almazko.battle_ship.game;
 
 /**
  * Created with IntelliJ IDEA.
@@ -12,19 +12,7 @@ public class Game {
 
     public enum Player {PROTAGONIST, OPPONENT}
 
-    public enum StrikeResult {MISS, ALREADY, HIT, KILL;
-
-        public byte toByte(Cell cell) {
-
-            byte result = Area.FIRED;
-
-            if (this.equals(HIT) || this.equals(KILL)) {
-                result &=  Area.SHIP;
-            }
-
-            return result;
-        }
-    }
+    public enum StrikeResult {MISS, ALREADY, HIT, KILL}
 
     public Player currentPlayer;
 

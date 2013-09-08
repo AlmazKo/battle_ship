@@ -1,8 +1,9 @@
-package free.almazko.battle_ship;
+package free.almazko.battle_ship.game;
 
 import android.graphics.Canvas;
 import android.view.MotionEvent;
 import android.view.View;
+import free.almazko.battle_ship.GameView;
 
 /**
  * Created with IntelliJ IDEA.
@@ -13,14 +14,14 @@ import android.view.View;
  */
 public class BattleController extends AbstractController {
 
-    private DrawView parentView;
+    private GameView parentView;
     private BattleCanvas gameCanvas;
     private Game game;
 
     private Area knownArea = new Area();
     Opponent opponent = new Opponent();
 
-    public BattleController(Canvas canvas, DrawView parentView, Area playersArea, Area opponentsArea) {
+    public BattleController(Canvas canvas, GameView parentView, Area playersArea, Area opponentsArea) {
 
         this.parentView = parentView;
         this.gameCanvas = new BattleCanvas(canvas);
