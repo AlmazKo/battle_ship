@@ -19,7 +19,7 @@ public class ZoneFinder {
     }
 
     public List<Zone> getZones() {
-
+        zones = new ArrayList<>();
         if (area.isEmpty()) {
             zones.add(new Zone(0, 0, Area.SIZE - 1, Area.SIZE - 1));
             return zones;
@@ -35,6 +35,8 @@ public class ZoneFinder {
 
         return zones;
     }
+
+
 
     private void recognize(int minPivotX, int minPivotY) {
 

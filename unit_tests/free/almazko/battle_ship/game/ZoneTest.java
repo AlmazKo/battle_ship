@@ -35,20 +35,20 @@ public class ZoneTest {
     public void maxXSize() {
         Zone zone;
         zone = new Zone(0, 0, 0, 0);
-        assertEquals(1, zone.maxXSize());
+        assertEquals(1, zone.xSize());
 
         zone = new Zone(0, 0, 2, 2);
-        assertEquals(3, zone.maxXSize());
+        assertEquals(3, zone.xSize());
     }
 
     @Test
     public void maxYSize() {
         Zone zone;
         zone = new Zone(0, 0, 0, 0);
-        assertEquals(1, zone.maxYSize());
+        assertEquals(1, zone.ySize());
 
         zone = new Zone(0, 0, 2, 4);
-        assertEquals(5, zone.maxYSize());
+        assertEquals(5, zone.ySize());
     }
 
     @Test

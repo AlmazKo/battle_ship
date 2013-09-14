@@ -1,12 +1,5 @@
 package free.almazko.battle_ship.game;
 
-/**
- * Created with IntelliJ IDEA.
- * User: almaz
- * Date: 9/13/13
- * Time: 10:07 PM
- * To change this template use File | Settings | File Templates.
- */
 public class Zone {
     public int maxX;
     public int maxY;
@@ -38,17 +31,19 @@ public class Zone {
     }
 
 
-    public int maxXSize() {
+    public int xSize() {
          return maxX - minX + 1;
     }
 
-    public int maxYSize() {
+    public int ySize() {
          return maxY - minY + 1;
     }
 
     public int maxSize() {
-        return Math.max(maxXSize(), maxYSize());
+        return Math.max(xSize(), ySize());
     }
 
-
+    public int minSize() {
+        return Math.min(xSize(), ySize());
+    }
 }

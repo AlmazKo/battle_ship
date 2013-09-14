@@ -2,7 +2,6 @@ package free.almazko.battle_ship.game;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Random;
 
 
@@ -17,6 +16,7 @@ public class Opponent {
 
     Cell move = new Cell(0, 0);
     public ShipsArea shipsArea = new ShipsArea();
+    private int[] availShips = {4, 3, 3, 2, 2, 2, 1, 1, 1, 1};
     public ShipsArea enemyShipsArea = new ShipsArea();
     Random random = new Random();
     Game.StrikeResult result;
@@ -28,8 +28,8 @@ public class Opponent {
 
     public Cell makeMove() {
 
-        move.x = random.nextInt(Area.SIZE);
-        move.y = random.nextInt(Area.SIZE);
+        move.x = rand(Area.SIZE);
+        move.y = rand(Area.SIZE);
 
         return move;
     }
@@ -38,99 +38,66 @@ public class Opponent {
         result = result;
     }
 
-
     public ShipsArea makeShips() {
 
-        boolean isVertical;
-        ShipsArea area = new ShipsArea();
-        Area freeSpace = area.getArea();
-        int maxShipSize = 4;
-        isVertical = random.nextBoolean();
+        Ship ship = null;
+        for (int shipSize : availShips) {
+            for (Zone zone : zoneFinder.getZones()) {
 
-        int x, y;
-        if (isVertical) {
-            x = random.nextInt(Area.SIZE);
-            y = random.nextInt(Area.SIZE - maxShipSize);
-        } else {
-            x = random.nextInt(Area.SIZE - maxShipSize);
-            y = random.nextInt(Area.SIZE);
-        }
-
-        Ship ship;
-        ship = makeShip(x, y, 4, isVertical);
-
-        area.add(ship);
-
-
-        int freeCells = 0;
-        for (int i = 0; i < Area.SIZE; i++) {
-            for (int j = 0; j < Area.SIZE; j++) {
-                if (area.getArea().isEmpty(i, j)) {
-                    freeCells++;
-                }
-            }
-        }
-
-
-        return area;
-    }
-
-    public List<Zone> getZones() {
-
-        ArrayList<Zone> zones = new ArrayList<>();
-
-        Area area = shipsArea.getArea();
-
-        if (area.isEmpty()) {
-            zones.add(new Zone(0, 0, 9, 9));
-            return zones;
-        }
-
-        int minPivotX = -1, minPivotY = -1;
-
-        for (int i = 0; i < Area.SIZE; i++) {
-            for (int j = 0; j < Area.SIZE; j++) {
-                if (area.isEmpty(i, j)) {
-                    minPivotX = i;
-                    minPivotY = j;
+                if (zone.maxSize() >= shipSize) {
+                    ship = positionShip(zone, shipSize);
                     break;
                 }
             }
-            if (minPivotX >= 0) break;
+            shipsArea.add(ship);
         }
 
-        if (minPivotX <= 0) return zones;
-
-        int maxPivotX = minPivotX, maxPivotY = minPivotY;
-
-        for (int i = minPivotX + 1; i < Area.SIZE; i++) {
-            if (area.isEmpty(i, maxPivotY)) {
-                maxPivotX++;
-            } else {
-                break;
-            }
-
-        }
-
-        if (maxPivotX <= 0) return zones;
-
-        Zone zone = null;
-
-
-        return zones;
+        return shipsArea;
     }
 
-    private Ship makeShip(int x, int y, int size, boolean isVertical) {
+    private Ship positionShip(Zone zone, int shipSize) {
+
+        boolean isVertical;
+        if (zone.minSize() >= shipSize) {
+            isVertical = random.nextBoolean();
+        } else {
+            isVertical = zone.ySize() >= shipSize;
+        }
+
+        int x, y;
+        if (isVertical) {
+            y = zone.minY + rand(zone.ySize() - shipSize);
+            x = zone.minX + rand(zone.xSize() - 1);
+        } else {
+            y = zone.minY + rand(zone.ySize() - 1);
+            x = zone.minX + rand(zone.xSize() - shipSize);
+        }
+
+        Ship ship;
+        ship = makeShip(x, y, shipSize, isVertical);
+
+        return ship;
+    }
+
+    private int rand(int value) {
+        if (value < 1) {
+            return 0;
+        } else {
+            return random.nextInt(value);
+        }
+    }
+
+    public Ship makeShip(int x, int y, int size, boolean isVertical) {
         Collection<Cell> cells = new ArrayList<>();
 
         for (int i = 0; i < size; i++) {
+            cells.add(new Cell(x, y));
+
             if (isVertical) {
                 y++;
             } else {
                 x++;
             }
-
-            cells.add(new Cell(x, y));
         }
 
         Ship.Direction direction;

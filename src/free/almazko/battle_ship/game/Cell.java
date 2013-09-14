@@ -18,4 +18,11 @@ public class Cell {
     public boolean equals(Cell cell) {
         return this.x == cell.x && this.y == cell.y;
     }
+
+    public boolean equals(Object other) {
+        if (this == other) return true;
+        if (!(other instanceof Cell)) return false;
+
+        return equals((Cell) other);
+    }
 }

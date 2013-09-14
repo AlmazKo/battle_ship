@@ -83,6 +83,8 @@ public class Area implements Cloneable {
                     case SHIP:
                         text.append("x");
                         break;
+                    default:
+                        text.append("*");
                 }
             }
             text.append("\n");

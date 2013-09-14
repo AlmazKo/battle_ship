@@ -21,7 +21,7 @@ public class BattleController extends AbstractController {
     private Area knownArea = new Area();
     Opponent opponent = new Opponent();
 
-    public BattleController(Canvas canvas, GameView parentView, Area playersArea, Area opponentsArea) {
+    public BattleController(Canvas canvas, GameView parentView, Area playersArea) {
 
         this.parentView = parentView;
         this.gameCanvas = new BattleCanvas(canvas);
