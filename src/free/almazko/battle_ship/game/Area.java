@@ -13,7 +13,7 @@ public class Area implements Cloneable {
     public static final int SHIPS_AREA = 0b10;
     public static final int FIRED = 0b100;
 
-    public static final byte SIZE = InitBattleMap.SIZE;
+    public static final int SIZE = 10;
     int[][] area;
 
 
@@ -44,6 +44,17 @@ public class Area implements Cloneable {
         return get(x, y) < 1;
     }
 
+    public boolean isEmpty() {
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                if (area[i][j] != EMPTY) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     public Area cloneArea() {
         int[][] newArea = new int[Area.SIZE][Area.SIZE];
 
@@ -54,5 +65,29 @@ public class Area implements Cloneable {
         }
 
         return new Area(newArea);
+    }
+
+    @Override
+    public String toString() {
+        StringBuffer text = new StringBuffer("  0123456789\n");
+
+        for (int y = 0; y < SIZE; y++) {
+            text.append(y);
+            text.append(" ");
+
+            for (int x = 0; x < SIZE; x++) {
+                switch (area[x][y]) {
+                    case EMPTY:
+                        text.append(".");
+                        break;
+                    case SHIP:
+                        text.append("x");
+                        break;
+                }
+            }
+            text.append("\n");
+        }
+
+        return text.toString();
     }
 }

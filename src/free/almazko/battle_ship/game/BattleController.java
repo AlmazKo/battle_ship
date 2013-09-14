@@ -25,7 +25,7 @@ public class BattleController extends AbstractController {
 
         this.parentView = parentView;
         this.gameCanvas = new BattleCanvas(canvas);
-        game = new Game(playersArea, opponentsArea);
+        game = new Game(playersArea, opponent.makeShips().getArea());
     }
 
     public void onDraw(Canvas canvas) {

@@ -17,6 +17,21 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         registerListeners();
+
+
+//         NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+//        int icon = R.drawable.wheel;
+//        CharSequence ticketText = "Hello";
+//        long when = System.currentTimeMillis();
+//        Notification.Builder noti = new Notification.Builder(this)
+//                .setContentTitle("В вашем круге надены новые события " )
+//                .setContentText( "Был задержан преступник \nРаспродажа H&M")
+//                .setTicker("Обнаружены события")
+//                .setWhen(System.currentTimeMillis())
+//                .setAutoCancel(true)
+//                .setSmallIcon(R.drawable.ic_launcher);
+//        Notification n = noti.getNotification();
+//        nm.notify(1, n);
     }
 
 
