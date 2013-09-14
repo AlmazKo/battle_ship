@@ -44,7 +44,6 @@ public class BattleCanvas {
             for (int y = 0; y < Area.SIZE; y++) {
                 int target = area.get(x, y);
 
-
                 if ((target & Area.SHIP) > 0) {
                     if ((target & Area.FIRED) > 0) {
                         grid.drawCell(x, y, Styles.get("wrong_ship"));

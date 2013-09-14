@@ -23,9 +23,12 @@ public class InitController extends AbstractController {
 
     public InitController(Canvas canvas, GameView parentView) {
         grid = new Grid(canvas, InitBattleMap.SIZE);
+        this.canvas = new InitCanvas(grid, canvas);
+
+
         grid.setPosition(0, 90);
         grid.setCellSpacing(Styles.gridCellOffset);
-        this.canvas = new InitCanvas(grid, canvas);
+
         this.parentView = parentView;
         battleMap = new InitBattleMap();
 
