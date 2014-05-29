@@ -1,4 +1,4 @@
-package free.almazko.battle_ship.game;
+package free.almazko.battle_ship.game.stage;
 
 import android.graphics.Canvas;
 import android.view.View;

@@ -1,6 +1,9 @@
-package free.almazko.battle_ship.game;
+package free.almazko.battle_ship.game.stage.battle;
 
 import android.graphics.Canvas;
+import free.almazko.battle_ship.game.*;
+import free.almazko.battle_ship.game.ui.Grid;
+import free.almazko.battle_ship.game.ui.Styles;
 
 import java.util.List;
 
@@ -20,7 +23,6 @@ public class BattleCanvas {
         playersGrid = new Grid(canvas, Area.SIZE, 300);
         playersGrid.setPosition(10, opponentsGrid.size() + 10);
 
-
         opponentsGrid.setCellSpacing(Styles.gridCellOffset);
         playersGrid.setCellSpacing(2);
     }
@@ -31,8 +33,8 @@ public class BattleCanvas {
 
     public void update(Canvas canvas, Area protagonistArea, Area knownArea) {
         this.canvas = canvas;
-        playersGrid.changeCanvas(canvas);
-        opponentsGrid.changeCanvas(canvas);
+        playersGrid.setCanvas(canvas);
+        opponentsGrid.setCanvas(canvas);
 
         drawProtagonistShips(protagonistArea, playersGrid);
         drawShips(knownArea, opponentsGrid);

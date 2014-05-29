@@ -2,13 +2,6 @@ package free.almazko.battle_ship.game;
 
 import java.util.*;
 
-/**
- * Created with IntelliJ IDEA.
- * User: almaz
- * Date: 8/19/13
- * Time: 10:59 PM
- * To change this template use File | Settings | File Templates.
- */
 public class Ship {
     private Deque<Cell> cells = new LinkedList<>();
     private Direction direction;
@@ -49,6 +42,10 @@ public class Ship {
 
     public boolean isImpossible() {
         return impossible;
+    }
+
+    public boolean hasDestroyed() {
+        return false;
     }
 
     public void setImpossible(boolean impossible) {

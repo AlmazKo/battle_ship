@@ -5,9 +5,8 @@ import android.graphics.Canvas;
 import android.os.Vibrator;
 import android.util.AttributeSet;
 import android.view.View;
-import free.almazko.battle_ship.game.AbstractController;
-import free.almazko.battle_ship.game.InitController;
-import free.almazko.battle_ship.game.Styles;
+import free.almazko.battle_ship.game.stage.AbstractController;
+import free.almazko.battle_ship.game.ui.Styles;
 
 public class GameView extends View {
     private static final String TAG = "GameView";
@@ -17,6 +16,7 @@ public class GameView extends View {
 
     public GameView(Context context, AttributeSet attrs) {
         super(context, attrs);
+
     }
 
     public GameView(Context context) {
@@ -48,13 +48,13 @@ public class GameView extends View {
 
     @Override
     public void onDraw(Canvas canvas) {
-        if (controller == null) {
-            controller = new InitController(canvas, this);
-            controller.onDraw(canvas);
-            setOnTouchListener(controller);
-        } else {
-            controller.onDraw(canvas);
-        }
+//        if (controller == null) {
+//            controller = new Controller(canvas, this);
+//            controller.onDraw(canvas);
+//            setOnTouchListener(controller);
+//        } else {
+//            controller.onDraw(canvas);
+//        }
 
     }
 

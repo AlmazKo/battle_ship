@@ -1,4 +1,6 @@
-package free.almazko.battle_ship.game;
+package free.almazko.battle_ship.game.ai;
+
+import free.almazko.battle_ship.game.Area;
 
 import java.util.ArrayList;
 import java.util.List;

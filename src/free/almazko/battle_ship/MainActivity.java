@@ -8,6 +8,7 @@ import android.widget.Button;
 
 public class MainActivity extends Activity {
     GameView gameView;
+    private int x;
 
     /**
      * Called when the activity is first created.

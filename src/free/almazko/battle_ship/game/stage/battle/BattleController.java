@@ -1,9 +1,13 @@
-package free.almazko.battle_ship.game;
+package free.almazko.battle_ship.game.stage.battle;
 
 import android.graphics.Canvas;
 import android.view.MotionEvent;
 import android.view.View;
 import free.almazko.battle_ship.GameView;
+import free.almazko.battle_ship.game.stage.AbstractController;
+import free.almazko.battle_ship.game.Area;
+import free.almazko.battle_ship.game.Cell;
+import free.almazko.battle_ship.game.ai.Opponent;
 
 /**
  * Created with IntelliJ IDEA.

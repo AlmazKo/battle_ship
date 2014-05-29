@@ -1,10 +1,11 @@
-package free.almazko.battle_ship.game;
+package free.almazko.battle_ship.game.stage.disposal;
 
-import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import free.almazko.battle_ship.game.ui.Grid;
+import free.almazko.battle_ship.game.ui.Styles;
 
-public class InitCanvas {
+public class Canvas2 {
 
     protected int reviewPlaceX, reviewPlaceY;
     protected int reviewCellSpacing;
@@ -16,13 +17,13 @@ public class InitCanvas {
     protected Paint shipsCounter = new Paint();
     protected Paint noAvailShipsPreview = new Paint();
     protected Grid grid;
-    protected Canvas canvas;
+    protected android.graphics.Canvas canvas;
 
-    public InitCanvas(Grid grid, Canvas canvas) {
+    public Canvas2(Grid grid, android.graphics.Canvas canvas) {
         this.grid = grid;
         this.canvas = canvas;
 
-        initVars();
+        initStyles();
     }
 
     public void drawText(int shipSize, int numberAvailShips) {
@@ -68,14 +69,14 @@ public class InitCanvas {
         }
     }
 
-    public void update(Canvas canvas) {
+    public void update(android.graphics.Canvas canvas) {
         this.canvas = canvas;
-        grid.changeCanvas(canvas);
+        grid.setCanvas(canvas);
 
         canvas.drawText("Расстановка кораблей", 150, 50, Styles.get("text_title"));
     }
 
-    protected void initVars() {
+    protected void initStyles() {
 
         int minCanvasSize = Math.min(canvas.getHeight(), canvas.getWidth());
 

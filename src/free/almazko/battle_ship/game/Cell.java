@@ -20,9 +20,6 @@ public class Cell {
     }
 
     public boolean equals(Object other) {
-        if (this == other) return true;
-        if (!(other instanceof Cell)) return false;
-
-        return equals((Cell) other);
+        return this == other || other instanceof Cell && equals((Cell) other);
     }
 }

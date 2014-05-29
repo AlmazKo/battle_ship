@@ -1,19 +1,25 @@
-package free.almazko.battle_ship.game;
+package free.almazko.battle_ship.game.ai;
 
+import free.almazko.battle_ship.game.Cell;
+import free.almazko.battle_ship.game.Ship;
+import free.almazko.battle_ship.game.ShipsArea;
+import junit.framework.Assert;
 import org.junit.Test;
 
-import static junit.framework.Assert.*;
+import static junit.framework.Assert.assertEquals;
 
 public class OpponentTest {
     @Test
     public void makeShips() {
         Opponent opponent;
 
-        final byte attempts = 50;
+        final byte attempts = 20;
         byte success = 0;
+        ShipsArea area;
+
         for (byte i = 0; i < attempts; i++) {
             opponent = new Opponent();
-            ShipsArea area = opponent.makeShips();
+            area = opponent.makeShips();
 
             if (area.ships.size() == 10) {
                 success++;
@@ -31,7 +37,7 @@ public class OpponentTest {
         Ship ship = opponent.makeShip(0, 0, 1, true);
 
         assertEquals(1, ship.size());
-        assertEquals(new Cell(0,0), ship.getCells().getFirst());
+        Assert.assertEquals(new Cell(0, 0), ship.getCells().getFirst());
     }
 
 

@@ -1,4 +1,4 @@
-package free.almazko.battle_ship.game;
+package free.almazko.battle_ship.game.ui;
 
 import android.graphics.Paint;
 import android.graphics.Typeface;
@@ -15,10 +15,16 @@ public class Styles {
     static {
         defaultStyle = new Paint();
         defaultStyle.setColor(0xFFFFFFFF);
+        defaultStyle.setStrokeWidth(1);
+        defaultStyle.setStyle(Paint.Style.STROKE);
     }
 
 
     public static void fill(int gridCellOffset) {
+
+        if (!styles.isEmpty()) {
+            styles = new HashMap<>();
+        }
 
         Styles.gridCellOffset = gridCellOffset;
 
@@ -78,9 +84,7 @@ public class Styles {
         paint.setColor(0xFFFF0000);
         paint.setAntiAlias(true);
         paint.setStyle(Paint.Style.FILL);
-        paint.setStyle(Paint.Style.FILL);
         styles.put("mini_wrong_ship", paint);
-
 
         paint = new Paint();
         paint.setColor(0xFF022244);
@@ -107,13 +111,37 @@ public class Styles {
         paint.setStyle(Paint.Style.STROKE);
         styles.put("cell_blank", paint);
 
-        Typeface tf = Typeface.create("Helvetica",Typeface.ITALIC);
+        Typeface tf = Typeface.create("Helvetica", Typeface.ITALIC);
         paint = new Paint();
         paint.setColor(0xFF42aaff);
         paint.setAntiAlias(true);
         paint.setTextSize(gridCellOffset * 4);
         paint.setTypeface(tf);
         styles.put("text_title", paint);
+
+
+
+           // disposal
+        paint = new Paint();
+        paint.setColor(0xFFFF0000);
+        paint.setAntiAlias(true);
+        paint.setStyle(Paint.Style.FILL);
+        paint.setShadowLayer(2, 0, 0, 0xFFFF0000);
+        styles.put("ships_counter", paint);
+
+        paint = new Paint();
+        paint.setColor(0xFF00DD73);
+        paint.setAntiAlias(true);
+        paint.setStyle(Paint.Style.FILL);
+        paint.setShadowLayer(2, 0, 0, 0xFF00FF00);
+        styles.put("avail_ships", paint);
+
+        paint = new Paint();
+        paint.setColor(0xFF666666);
+        paint.setAntiAlias(true);
+        paint.setStyle(Paint.Style.FILL);
+        paint.setShadowLayer(2, 0, 0, 0xFFAAAAAA);
+        styles.put("not_avail_ships", paint);
     }
 
     public static Paint get(String name) {
@@ -123,6 +151,24 @@ public class Styles {
         } else {
             return paint;
         }
+    }
+
+
+
+    public static Paint mix(Paint... paints) {
+
+        Paint mixed = new Paint();
+        for (Paint paint : paints) {
+            mixed.setColor(paint.getColor());
+            mixed.setAntiAlias(paint.isAntiAlias());
+            mixed.setStrokeWidth(paint.getStrokeWidth());
+            mixed.setStyle(paint.getStyle());
+            mixed.setTextSize(paint.getTextSize());
+            mixed.setTypeface(paint.getTypeface());
+        }
+
+        return mixed;
+
     }
 
 }

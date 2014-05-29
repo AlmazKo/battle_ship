@@ -1,4 +1,7 @@
-package free.almazko.battle_ship.game;
+package free.almazko.battle_ship.game.stage.battle;
+
+import free.almazko.battle_ship.game.Area;
+import free.almazko.battle_ship.game.Cell;
 
 /**
  * Created with IntelliJ IDEA.
@@ -19,9 +22,9 @@ public class Game {
     private Area playersArea;
     private Area opponentsArea;
 
-    public Game(Area playersArea, Area opponentsArea) {
-        this.playersArea = playersArea;
-        this.opponentsArea = opponentsArea;
+    public Game(final Area playersArea, final Area opponentsArea) {
+        this.playersArea = playersArea.cloneArea();
+        this.opponentsArea = opponentsArea.cloneArea();
         choiceFirstPlayer();
     }
 

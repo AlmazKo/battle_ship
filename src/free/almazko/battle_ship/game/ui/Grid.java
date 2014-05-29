@@ -1,8 +1,9 @@
-package free.almazko.battle_ship.game;
+package free.almazko.battle_ship.game.ui;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import free.almazko.battle_ship.game.Cell;
 
 public class Grid {
 
@@ -59,7 +60,7 @@ public class Grid {
         properties.update(cellSpacing);
     }
 
-    public void changeCanvas(Canvas canvas) {
+    public void setCanvas(Canvas canvas) {
         this.canvas = canvas;
 
     }

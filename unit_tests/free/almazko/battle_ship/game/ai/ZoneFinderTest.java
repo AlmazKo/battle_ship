@@ -1,5 +1,6 @@
-package free.almazko.battle_ship.game;
+package free.almazko.battle_ship.game.ai;
 
+import free.almazko.battle_ship.game.Area;
 import org.junit.Test;
 
 import java.util.List;

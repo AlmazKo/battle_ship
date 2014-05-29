@@ -4,16 +4,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-/**
- * Created with IntelliJ IDEA.
- * User: almaz
- * Date: 9/8/13
- * Time: 5:39 PM
- * To change this template use File | Settings | File Templates.
- */
 public class ShipsArea implements Iterable<Ship> {
     Area area;
-    Collection<Ship> ships = new ArrayList<>();
+    public Collection<Ship> ships = new ArrayList<>();
 
     public ShipsArea() {
         this.area = new Area();
@@ -34,7 +27,7 @@ public class ShipsArea implements Iterable<Ship> {
 
     public boolean add(Ship ship) {
 
-        if (!possibleAddShip(ship)) {
+        if (!freeSpaceForShip(ship)) {
             return false;
         }
 
@@ -57,11 +50,6 @@ public class ShipsArea implements Iterable<Ship> {
 
         return true;
     }
-
-    public boolean possibleAddShip(final Ship ship) {
-        return freeSpaceForShip(ship);
-    }
-
     public boolean freeSpaceForShip(Ship ship) {
 
         for (Cell cell : ship.getCells()) {
