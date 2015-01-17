@@ -55,7 +55,7 @@
 //
 //    private boolean possibleAddShip(final Ship ship) {
 //
-//        return !availShips.ended(ship.size()) && shipsArea.freeSpaceForShip(ship);
+//        return !availShips.isEndedShips(ship.size()) && shipsArea.freeSpaceForShip(ship);
 //    }
 //
 ////    public void onDraw(android.graphics.Canvas2 canvas) {
@@ -135,7 +135,7 @@
 //        shipsArea.add(draftShip);
 //
 //        draftShip = null;
-//        if (availShips.allEnded()) {
+//        if (availShips.isEndedAllShips()) {
 //            // notify
 //        }
 //

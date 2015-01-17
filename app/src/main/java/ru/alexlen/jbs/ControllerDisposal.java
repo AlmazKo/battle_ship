@@ -1,6 +1,7 @@
 package ru.alexlen.jbs;
 
 
+import android.util.Log;
 import ru.alexlen.jbs.event.CellAction;
 import ru.alexlen.jbs.event.CellActionListener;
 import ru.alexlen.jbs.game.*;
@@ -10,37 +11,33 @@ import java.util.LinkedList;
 
 public class ControllerDisposal implements CellActionListener {
 
+    private final static String TAG = "ControllerDisposal";
 
     enum Direction {VERTICAL, HORIZONTAL}
 
     private Direction direction;
-    private boolean   impossiblePlace = false;
-    private Cell      lastCell        = new Cell(-1, -1);
-    private ShipsArea shipsArea       = new ShipsArea();
-    private Ship draftShip;
+    private Cell      currentCell;
+    private ShipsArea shipsArea = new ShipsArea();
+    private Ship mDraftShip;
 
 
-    private DisposalViewController viewController;
+    private ViewDisposal mView;
 
-    AvailableShips availShips;
+    final AvailableShips mAvailShips;
 
-    public ControllerDisposal(DisposalLogic logic, DisposalViewController viewController)
-    {
-        availShips = logic.getAvailableShips();
-        this.viewController = viewController;
-        viewController.setCellActionListener(this);
-        // viewController.drawCommittedShips(shipsArea.getArea());
+    public ControllerDisposal(DisposalLogic logic, ViewDisposal view) {
+        mAvailShips = logic.getAvailableShips();
+        mView = view;
+        view.setCellActionListener(this);
     }
 
 
-    public void start()
-    {
-        viewController.drawCommittedShips(shipsArea.getArea());
+    public void start() {
+        mView.drawCommittedShips(shipsArea.getArea());
     }
 
     @Override
-    public void onCellAction(final CellAction action)
-    {
+    public void onCellAction(final CellAction action) {
 
         if (action.isUp()) {
             commitShip();
@@ -50,15 +47,16 @@ public class ControllerDisposal implements CellActionListener {
         if (action.isDown()) {
             initShip(action.getCell());
         } else if (action.isMove()) {
-            modifyShip(action.getCell());
+            if (mDraftShip != null) modifyShip(action.getCell());
         }
     }
 
     // TODO move to DisposalLogic
-    private boolean possibleAddShip(final Ship ship)
-    {
+    private boolean possibleAddShip(Ship ship) {
+        boolean p = !mAvailShips.isEndedShips(ship.size()) && shipsArea.freeSpaceForShip(ship);
 
-        return !availShips.ended(ship.size()) && shipsArea.freeSpaceForShip(ship);
+     //   Log.d(TAG, "possibleAddShip: " + p);
+        return p;
     }
 
 //    public void onDraw(android.graphics.Canvas2 canvas) {
@@ -77,22 +75,20 @@ public class ControllerDisposal implements CellActionListener {
 //        }
 //    }
 
-    private void initShip(final Cell targetCell)
-    {
-        lastCell = targetCell;
+    private void initShip(Cell targetCell) {
+        currentCell = targetCell;
         placeShip(new Ship(targetCell));
     }
 
-    private void modifyShip(final Cell targetCell)
-    {
-        if (lastCell.equals(targetCell)) {
+    private void modifyShip(Cell targetCell) {
+        if (currentCell.equals(targetCell)) {
             return;
         }
 
-        lastCell = targetCell;
+        currentCell = targetCell;
 
         if (direction == null) {
-            direction = recognizeDirection(lastCell, draftShip.getCells().getFirst());
+            direction = recognizeDirection(currentCell, mDraftShip.getCells().getFirst());
             if (direction == null) {
                 return;
             }
@@ -100,7 +96,7 @@ public class ControllerDisposal implements CellActionListener {
 
         Ship ship = recognizeShip(targetCell);
 
-        if (draftShip.equals(ship)) {
+        if (mDraftShip.equals(ship)) {
             return;
         }
 
@@ -111,40 +107,38 @@ public class ControllerDisposal implements CellActionListener {
         placeShip(ship);
     }
 
-    private void placeShip(final Ship ship)
-    {
+    private void placeShip(final Ship ship) {
         if (!shipsArea.freeSpaceForShip(ship)) {
             return;
         }
 
-        draftShip = ship;
-        viewController.drawDraftShip(ship, possibleAddShip(ship));
+        mDraftShip = ship;
+
+        Log.d(TAG, "place: " + mDraftShip);
+        mView.drawDraftShip(ship, possibleAddShip(ship));
     }
 
-    private void commitShip()
-    {
-
-        if (draftShip == null) {
-            return;
-        }
-
-        if (!possibleAddShip(draftShip)) {
+    private void commitShip() {
+        if (mDraftShip == null) return;
+        if (!possibleAddShip(mDraftShip)) {
+            mView.drawCommittedShips(shipsArea.getArea());
             return;
         }
 
         direction = null;
-        shipsArea.add(draftShip);
+        shipsArea.add(mDraftShip);
+        Log.d(TAG, "commit: " + mDraftShip);
 
-        draftShip = null;
-//        if (availShips.allEnded()) {
+//        if (mAvailShips.isEndedAllShips()) {
 //            // notify
 //        }
 
-        viewController.drawCommittedShips(shipsArea.getArea());
+        mAvailShips.remove(mDraftShip.size());
+        mDraftShip = null;
+        mView.drawCommittedShips(shipsArea.getArea());
     }
 
-    private Ship recognizeShip(final Cell targetCell)
-    {
+    private Ship recognizeShip(final Cell targetCell) {
         if (direction.equals(Direction.HORIZONTAL)) {
             return makeHorizontalShip(targetCell);
         } else {
@@ -152,10 +146,9 @@ public class ControllerDisposal implements CellActionListener {
         }
     }
 
-    private Ship makeHorizontalShip(final Cell targetCell)
-    {
+    private Ship makeHorizontalShip(Cell targetCell) {
         Deque<Cell> cells = new LinkedList<>();
-        Cell firstCell = draftShip.getCells().getFirst();
+        Cell firstCell = mDraftShip.getCells().getFirst();
 
         if (firstCell.x < targetCell.x) {
             for (int x = firstCell.x; x <= targetCell.x; x++) {
@@ -170,10 +163,9 @@ public class ControllerDisposal implements CellActionListener {
         return new Ship(cells, Ship.Direction.HORIZONTAL);
     }
 
-    private Ship makeVerticalShip(final Cell targetCell)
-    {
+    private Ship makeVerticalShip(Cell targetCell) {
         Deque<Cell> cells = new LinkedList<>();
-        final Cell firstCell = draftShip.getCells().getFirst();
+        final Cell firstCell = mDraftShip.getCells().getFirst();
 
         if (firstCell.y < targetCell.y) {
             for (int y = firstCell.y; y <= targetCell.y; y++) {
@@ -188,8 +180,7 @@ public class ControllerDisposal implements CellActionListener {
         return new Ship(cells, Ship.Direction.VERTICAL);
     }
 
-    private Direction recognizeDirection(final Cell cell, final Cell headCell)
-    {
+    private Direction recognizeDirection(Cell cell, Cell headCell) {
         if (headCell.x == cell.x) {
             return Direction.VERTICAL;
         } else if (headCell.y == cell.y) {

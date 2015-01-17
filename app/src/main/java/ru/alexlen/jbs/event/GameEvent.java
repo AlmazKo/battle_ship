@@ -1,14 +1,13 @@
 package ru.alexlen.jbs.event;
 
 import android.view.MotionEvent;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.alexlen.jbs.game.Cell;
 
 /**
  * @author Almazko
  */
-public class GameEvent implements CellAction {
+public final class GameEvent implements CellAction {
     public final Cell cell;
     public final MotionEvent cause;
 
@@ -30,6 +29,8 @@ public class GameEvent implements CellAction {
 
     @Override
     public boolean isUp() {
+
+        // add CANCEL
         return cause.getAction() == MotionEvent.ACTION_UP;
     }
 

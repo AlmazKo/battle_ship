@@ -39,8 +39,8 @@ public class AvailableShipsTest {
 
         assertTrue("Should success remove ships", ships.remove(5));
         assertEquals("Ships this size should equals 0", ships.count(5), 0);
-        assertTrue("Ships this size has ended", ships.ended(5));
-        assertFalse("Must not remove ships when it has ended", ships.remove(5));
+        assertTrue("Ships this size has isEndedShips", ships.isEndedShips(5));
+        assertFalse("Must not remove ships when it has isEndedShips", ships.remove(5));
     }
 
     @Test
@@ -48,12 +48,12 @@ public class AvailableShipsTest {
 
         assertTrue("Successful ship remove", ships.remove(4));
         assertEquals("Ships quantity of the same size should be equal to 1", ships.count(4), 1);
-        assertFalse("Ships this size has not ended", ships.ended(4));
+        assertFalse("Ships this size has not isEndedShips", ships.isEndedShips(4));
 
         assertTrue("Should success ship remove ", ships.remove(4));
 
         assertEquals("After double decreasing, amount of available ships should equals 0", ships.count(4), 0);
-        assertTrue("After double decreasing, available ships has ended", ships.ended(4));
+        assertTrue("After double decreasing, available ships has isEndedShips", ships.isEndedShips(4));
         assertFalse("After double decreasing, must not remove this ships", ships.remove(4));
     }
 
@@ -61,7 +61,7 @@ public class AvailableShipsTest {
     @Test
     public void removeAllShips() throws Exception {
 
-        assertFalse(ships.allEnded());
+        assertFalse(ships.isEndedAllShips());
 
         assertTrue(ships.remove(5));
 
@@ -89,7 +89,7 @@ public class AvailableShipsTest {
         assertFalse(ships.remove(2));
         assertFalse(ships.remove(1));
 
-        assertTrue(ships.allEnded());
+        assertTrue(ships.isEndedAllShips());
 
     }
 }

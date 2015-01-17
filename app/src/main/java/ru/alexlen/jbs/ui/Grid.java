@@ -111,6 +111,7 @@ public class Grid {
         }
     }
 
+    private Cell lastCell;
     public Cell recognizeCell(float x, float y) {
 
         int cellX = (int) Math.floor((x - left) / properties.cellSize);
@@ -120,7 +121,12 @@ public class Grid {
             return null;
         }
 
-        return new Cell(cellX, cellY);
+        //optimization
+        if (lastCell != null && lastCell.equals(cellX, cellY)) return lastCell;
+
+        lastCell = new Cell(cellX, cellY);
+
+        return lastCell;
     }
 
     public void drawCell(final Cell cell, Paint paint) {

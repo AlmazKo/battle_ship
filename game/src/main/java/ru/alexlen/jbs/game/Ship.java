@@ -9,7 +9,7 @@ import java.util.LinkedList;
 /**
  * Value object
  */
-public class Ship {
+public class Ship implements Cloneable {
     private final Deque<Cell> cells;
     private final Direction   direction;
 
@@ -71,7 +71,18 @@ public class Ship {
         return cells.equals(ship.cells);
     }
 
-//
+    @Override public String toString() {
+        StringBuilder builder = new StringBuilder("Ship:");
+
+        for (Cell cell : cells) {
+            builder.append(cell.toString());
+            builder.append(',');
+        }
+
+        return builder.toString();
+    }
+
+    //
 //    public boolean equals(Ship ship) {
 //        if (ship.size() != size()) return false;
 //
@@ -87,4 +98,16 @@ public class Ship {
 //        return true;
 ////        return cells.equals(ship.getCells());
 //    }
+
+
+    public Ship copy() {
+
+        Deque<Cell> newCells = new LinkedList<>();
+
+        for (Cell cell : cells) {
+            newCells.add(cell);
+        }
+
+        return new Ship(newCells, direction);
+    }
 }

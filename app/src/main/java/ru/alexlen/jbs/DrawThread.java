@@ -42,7 +42,7 @@ public class DrawThread extends Thread {
             }
 
 
-            Log.d(TAG, "Get Task " + effect);
+            Log.d(TAG, "Got task: " + effect);
 
             canvas = null;
 

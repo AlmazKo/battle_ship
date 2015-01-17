@@ -15,24 +15,25 @@ public class AvailableShips {
     }
 
 
-    public int count(int i) {
-        return availShips[i];
+    public int count(int shipSize) {
+        return availShips[shipSize];
     }
 
-    public boolean remove(final int i) {
-        if (availShips[i] > 0) {
-            availShips[i]--;
+    //todo rename
+    public boolean remove(int shipSize) {
+        if (availShips[shipSize] > 0) {
+            availShips[shipSize]--;
             return true;
         } else {
             return false;
         }
     }
 
-    public boolean ended(final int i) {
-        return availShips[i] < 1;
+    public boolean isEndedShips(final int shipSize) {
+        return availShips[shipSize] < 1;
     }
 
-    public boolean allEnded() {
+    public boolean isEndedAllShips() {
         for (int i = 1; i <= maxShips; i++) {
             if (availShips[i] > 0) return false;
         }

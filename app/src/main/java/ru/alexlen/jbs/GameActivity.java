@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.WindowManager;
-import ru.alexlen.jbs.game.BattleLogic;
 import ru.alexlen.jbs.game.DisposalLogic;
 import ru.alexlen.jbs.ui.Styles;
 
@@ -16,14 +15,12 @@ import ru.alexlen.jbs.ui.Styles;
  * Time: 11:18 PM
  * To change this template use File | Settings | File Templates.
  */
-public class GameActivity extends Activity  implements SurfaceHolder.Callback {
+public class GameActivity extends Activity implements SurfaceHolder.Callback {
 
-    private GameView               view;
-    private DisposalViewController viewController;
-    private ControllerDisposal     battleController;
+    private GameView           view;
+    private ControllerDisposal controller;
 
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         Log.d("BATTLE", "GameActivity create");
@@ -42,31 +39,27 @@ public class GameActivity extends Activity  implements SurfaceHolder.Callback {
     }
 
     private void startDisposal() {
-        viewController = new DisposalViewController(view);
-        battleController = new ControllerDisposal(new DisposalLogic(), viewController);
+        controller = new ControllerDisposal(new DisposalLogic(), new ViewDisposal(view));
     }
 
-    private void startBattle() {
-        BattleViewController viewController = new BattleViewController(view);
-        new ControllerBattle(new BattleLogic(null, null), viewController);
-    }
+//
+//    private void startBattle()
+//    {
+//        BattleViewController viewController = new BattleViewController(view);
+//        new ControllerBattle(new BattleLogic(null, null), viewController);
+//    }
 
 
     @Override
-    public void surfaceCreated(SurfaceHolder holder)
-    {
-        battleController.start();
+    public void surfaceCreated(SurfaceHolder holder) {
+        controller.start();
     }
 
-    @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height)
-    {
+    @Override public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 
     }
 
-    @Override
-    public void surfaceDestroyed(SurfaceHolder holder)
-    {
+    @Override public void surfaceDestroyed(SurfaceHolder holder) {
 
     }
 }

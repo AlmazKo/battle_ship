@@ -1,6 +1,7 @@
 package ru.alexlen.jbs;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -16,13 +17,13 @@ import ru.alexlen.jbs.ui.Styles;
 /**
  * @author Almazko
  */
-public class DisposalViewController extends AbstractViewController {
+public class ViewDisposal extends AbstractViewController {
 
+    final static String TAG = "DisposalView";
     Area area;
     Grid grid;
 
-    public DisposalViewController(GameView view)
-    {
+    public ViewDisposal(GameView view) {
         super(view);
     }
 
@@ -37,18 +38,16 @@ public class DisposalViewController extends AbstractViewController {
         protected Paint availShipsPreview   = new Paint();
         protected Paint shipsCounter        = new Paint();
         protected Paint noAvailShipsPreview = new Paint();
-        protected android.graphics.Canvas canvas;
+        protected Canvas canvas;
 
-        public Style(Canvas canvas)
-        {
+        public Style(Canvas canvas) {
             this.canvas = canvas;
 
             initStyles();
         }
 
 
-        protected void initStyles()
-        {
+        protected void initStyles() {
 
             int minCanvasSize = Math.min(canvas.getHeight(), canvas.getWidth());
 
@@ -90,20 +89,33 @@ public class DisposalViewController extends AbstractViewController {
 
     RenderTask eDrawCommittedShips = new RenderTask() {
         @Override
-        public void draw(@NotNull final Canvas canvas)
-        {
+        public void draw(@NotNull final Canvas canvas) {
 
+            canvas.drawColor(Color.BLACK);
             canvas.drawText("Расстановка кораблей", 150, 50, Styles.get("text_title"));
-            grid = new Grid(canvas, 10);
+            grid = new Grid(canvas, 10,1000);
+            grid.setPosition(5, 100);
+
+
+            //Log.i("MAP", area.toString());
+
+            for (int x = 0; x < Area.SIZE; x++) {
+                for (int y = 0; y < Area.SIZE; y++) {
+                    switch (area.get(x, y)) {
+                        case Area.SHIPS_AREA:
+                            grid.drawCell(x, y, Styles.get("ships_area"));
+                            break;
+                        default:
+                    }
+                }
+            }
+
 
             for (int x = 0; x < Area.SIZE; x++) {
                 for (int y = 0; y < Area.SIZE; y++) {
                     switch (area.get(x, y)) {
                         case Area.SHIP:
                             grid.drawCell(x, y, Styles.get("ship"));
-                            break;
-                        case Area.SHIPS_AREA:
-                            grid.drawCell(x, y, Styles.get("ships_area"));
                             break;
                         default:
                             grid.drawCell(x, y, Styles.get("cell_blank"));
@@ -114,22 +126,18 @@ public class DisposalViewController extends AbstractViewController {
 
     };
 
-    public void drawCommittedShips(@NotNull Area area)
-    {
+    public void drawCommittedShips(@NotNull Area area) {
         this.area = area;
-
-
         view.addRenderTask(eDrawCommittedShips);
     }
 
 
-    public void drawDraftShip(@NotNull final Ship draftShip, final boolean possible)
-    {
+    public void drawDraftShip(@NotNull final Ship draftShip, final boolean possible) {
         view.addRenderTask(new RenderTask() {
             @Override
-            public void draw(@NotNull final Canvas canvas)
-            {
+            public void draw(@NotNull final Canvas canvas) {
                 eDrawCommittedShips.draw(canvas);
+
 
                 Paint paint;
                 if (possible) {
@@ -138,18 +146,16 @@ public class DisposalViewController extends AbstractViewController {
                     paint = Styles.get("wrong_ship");
                 }
 
+                Log.d("RenderTask", "draft: " + draftShip);
                 for (Cell cell : draftShip.getCells()) {
                     grid.drawCell(cell, paint);
                 }
             }
         });
 
-
     }
 
-
-    private boolean isVertical(Canvas canvas)
-    {
+    private boolean isVertical(Canvas canvas) {
         return canvas.getWidth() < canvas.getHeight();
     }
 
@@ -196,19 +202,25 @@ public class DisposalViewController extends AbstractViewController {
 //        }
 //    }
 
+    Cell cell;
+    Cell lastCell;
+    int  lastAction;
 
     @Override
-    public boolean onTouch(View v, MotionEvent event)
-    {
+    public boolean onTouch(View v, MotionEvent event) {
         if (cellActionListener == null) return super.onTouch(v, event);
+        Log.v(TAG, "onTouch: " + event);
+        cell = grid.recognizeCell(event.getX(), event.getY());
 
-        final int action = event.getAction();
-        if (action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_MOVE) {
-            Cell cell = grid.recognizeCell(event.getX(), event.getY());
-            Log.d("BATTLE", "GameView new event: recognize grid cell: " + cell);
-            cellActionListener.onCellAction(new GameEvent(event, cell));
-        }
 
-        return super.onTouch(v, event);
+        if (cell == null) return true;// TEMP
+        if (cell.equals(lastCell) && lastAction == event.getAction()) return true;
+        lastCell = cell;
+        lastAction = event.getAction();
+
+        Log.d(TAG, MotionEvent.actionToString(event.getAction()) + ": " + cell);
+        cellActionListener.onCellAction(new GameEvent(event, cell));
+
+        return true;
     }
 }

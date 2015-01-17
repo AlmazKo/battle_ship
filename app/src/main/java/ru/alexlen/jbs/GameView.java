@@ -39,7 +39,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         getHolder().addCallback(this);
     }
 
-    synchronized public void addRenderTask(@NotNull final RenderTask task)
+    synchronized void addRenderTask(@NotNull final RenderTask task)
     {
         queue.push(task);
     }

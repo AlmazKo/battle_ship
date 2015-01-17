@@ -10,7 +10,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 /**
  * @author Almazko
  */
-public class AbstractViewController implements View.OnTouchListener {
+public abstract class AbstractViewController implements View.OnTouchListener {
 
     protected CellActionListener cellActionListener;
     public final BlockingDeque<RenderTask> queue = new LinkedBlockingDeque<>();
