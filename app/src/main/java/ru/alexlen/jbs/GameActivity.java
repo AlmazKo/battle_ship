@@ -57,6 +57,9 @@ public class GameActivity extends Activity implements SurfaceHolder.Callback {
 
         BattleLogic logic = new BattleLogic(playerArea, opponentShips.getArea());
 
+
+        Log.d("GameActivity", opponentShips.getArea().toString());
+
         ControllerBattle controller = new ControllerBattle(this, logic, playerArea, opponent, new ViewBattle(view));
 
         controller.start();

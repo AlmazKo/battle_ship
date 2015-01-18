@@ -2,8 +2,13 @@ package ru.alexlen.jbs;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
 import org.jetbrains.annotations.NotNull;
+import ru.alexlen.jbs.event.GameEvent;
 import ru.alexlen.jbs.game.Area;
+import ru.alexlen.jbs.game.Cell;
 import ru.alexlen.jbs.ui.Grid;
 import ru.alexlen.jbs.ui.Styles;
 
@@ -34,7 +39,7 @@ public class ViewBattle extends AbstractView {
             playersGrid.setPosition(10, opponentsGrid.size() + 10);
 
 
-            drawProtagonistShips(protagonistArea, playersGrid);
+            drawShips(protagonistArea, playersGrid);
             drawShips(knownArea, opponentsGrid);
 
         }
@@ -42,21 +47,36 @@ public class ViewBattle extends AbstractView {
 
         private void drawShips(Area area, Grid grid) {
 
+
+            int target;
+
             for (int x = 0; x < Area.SIZE; x++) {
                 for (int y = 0; y < Area.SIZE; y++) {
-                    int target = area.get(x, y);
+                    target = area.get(x, y);
+                    if ((target & Area.FIRED) > 0 && (target & Area.SHIP) <= 0) {
+                        grid.drawCell(x, y, Styles.get("fared_area"));
+                    }
+                }
+            }
 
+
+            for (int x = 0; x < Area.SIZE; x++) {
+                for (int y = 0; y < Area.SIZE; y++) {
+                    grid.drawCell(x, y, Styles.get("cell_blank"));
+                }
+            }
+
+
+            for (int x = 0; x < Area.SIZE; x++) {
+                for (int y = 0; y < Area.SIZE; y++) {
+                    target = area.get(x, y);
+                    //grid.drawCell(x, y, Styles.get("mini_ships_area"));
                     if ((target & Area.SHIP) > 0) {
+
                         if ((target & Area.FIRED) > 0) {
                             grid.drawCell(x, y, Styles.get("wrong_ship"));
                         } else {
-                            grid.drawCell(x, y, Styles.get("ship"));
-                        }
-                    } else {
-                        if ((target & Area.FIRED) > 0) {
-                            grid.drawCell(x, y, Styles.get("fared_area"));
-                        } else {
-                            grid.drawCell(x, y, Styles.get("ships_area"));
+                            grid.drawCell(x, y, Styles.get("mini_ship"));
                         }
                     }
                 }
@@ -79,7 +99,8 @@ public class ViewBattle extends AbstractView {
                         if ((target & Area.FIRED) > 0) {
                             grid.drawCell(x, y, Styles.get("mini_fared_area"));
                         } else {
-                            grid.drawCell(x, y, Styles.get("mini_ships_area"));
+//                            grid.drawCell(x, y, Styles.get("mini_ships_area"));
+                            grid.drawCell(x, y, Styles.get("cell_blank"));
                         }
                     }
                 }
@@ -87,13 +108,32 @@ public class ViewBattle extends AbstractView {
         }
     };
 
+
+    public ViewBattle(GameView view) {
+        super(view);
+    }
+
+
     public void drawCommittedShips(Area knownArea, Area protagonistArea) {
         this.protagonistArea = protagonistArea;
         this.knownArea = knownArea;
         view.addRenderTask(eDrawCommittedShips);
     }
 
-    public ViewBattle(GameView view) {
-        super(view);
+
+    Cell cell;
+    Cell lastCell;
+    int  lastAction;
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        if (cellActionListener == null) return super.onTouch(v, event);
+        Log.v(TAG, "onTouch: " + event);
+        cell = opponentsGrid.recognizeCell(event.getX(), event.getY());
+
+        Log.d(TAG, MotionEvent.actionToString(event.getAction()) + ": " + cell);
+        cellActionListener.onCellAction(new GameEvent(event, cell));
+
+        return true;
     }
 }

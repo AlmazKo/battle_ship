@@ -82,7 +82,7 @@ public class Area implements Cloneable {
                         text.append(".");
                         break;
                     case SHIP:
-                        text.append("﹕");
+                        text.append("█");
                         break;
                     default:
                         text.append("~");
