@@ -44,19 +44,18 @@ public class ControllerDisposal implements CellActionListener {
             return;
         }
 
+        if (!action.isCellRecognized()) return;
+
         if (action.isDown()) {
             initShip(action.getCell());
-        } else if (action.isMove()) {
-            if (mDraftShip != null) modifyShip(action.getCell());
+        } else if (action.isMove() && mDraftShip != null) {
+            modifyShip(action.getCell());
         }
     }
 
     // TODO move to DisposalLogic
     private boolean possibleAddShip(Ship ship) {
-        boolean p = !mAvailShips.isEndedShips(ship.size()) && shipsArea.freeSpaceForShip(ship);
-
-     //   Log.d(TAG, "possibleAddShip: " + p);
-        return p;
+        return !mAvailShips.isEndedShips(ship.size()) && shipsArea.freeSpaceForShip(ship);
     }
 
 //    public void onDraw(android.graphics.Canvas2 canvas) {
@@ -95,6 +94,9 @@ public class ControllerDisposal implements CellActionListener {
         }
 
         Ship ship = recognizeShip(targetCell);
+        if (ship.size() ==1) {
+            direction = null;
+        }
 
         if (mDraftShip.equals(ship)) {
             return;

@@ -4,6 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
 
+import org.jetbrains.annotations.Nullable;
 import ru.alexlen.jbs.game.Cell;
 
 
@@ -112,6 +113,8 @@ public class Grid {
     }
 
     private Cell lastCell;
+
+    @Nullable
     public Cell recognizeCell(float x, float y) {
 
         int cellX = (int) Math.floor((x - left) / properties.cellSize);

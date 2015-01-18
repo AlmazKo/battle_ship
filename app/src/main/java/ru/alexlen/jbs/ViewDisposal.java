@@ -93,8 +93,8 @@ public class ViewDisposal extends AbstractViewController {
 
             canvas.drawColor(Color.BLACK);
             canvas.drawText("Расстановка кораблей", 150, 50, Styles.get("text_title"));
-            grid = new Grid(canvas, 10,1000);
-            grid.setPosition(5, 100);
+            grid = new Grid(canvas, 10);
+            grid.setPosition(0,100);
 
 
             //Log.i("MAP", area.toString());
@@ -213,8 +213,10 @@ public class ViewDisposal extends AbstractViewController {
         cell = grid.recognizeCell(event.getX(), event.getY());
 
 
-        if (cell == null) return true;// TEMP
-        if (cell.equals(lastCell) && lastAction == event.getAction()) return true;
+        //if (cell == null) return true;// TEMP
+
+         if (cell == lastCell && event.getAction() == lastAction) return true;
+
         lastCell = cell;
         lastAction = event.getAction();
 

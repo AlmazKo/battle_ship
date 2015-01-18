@@ -1,6 +1,6 @@
 package ru.alexlen.jbs.event;
 
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ru.alexlen.jbs.game.Cell;
 
 /**
@@ -8,8 +8,9 @@ import ru.alexlen.jbs.game.Cell;
  */
 public interface CellAction {
 
-    @NotNull
+    @Nullable
     public Cell getCell();
+    public boolean isCellRecognized();
     public boolean isUp();
     public boolean isDown();
     public boolean isMove();
