@@ -53,7 +53,7 @@ public class Styles {
         paint.setColor(0xFF00DD73);
         paint.setAntiAlias(true);
         paint.setStyle(Paint.Style.FILL);
-        paint.setShadowLayer(blurSize, 0, 0, 0xFF00FF00);
+        paint.setShadowLayer(blurSize, 0, 0, 0xFF00DD73);
         styles.put("ship", paint);
 
         paint = new Paint();
