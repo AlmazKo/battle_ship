@@ -4,7 +4,7 @@ import org.junit.Test;
 import ru.alexlen.jbs.game.Area;
 import ru.alexlen.jbs.game.Cell;
 import ru.alexlen.jbs.game.Ship;
-import ru.alexlen.jbs.game.ai.Opponent;
+import ru.alexlen.jbs.game.ai.OpponentDisposal;
 
 import static org.junit.Assert.assertEquals;
 
@@ -29,7 +29,7 @@ public class BattleTest {
 
 //        Game battle = new Game(playerArea, opponentArea);
 
-        Opponent opponent = new Opponent();
+        OpponentDisposal opponent = new OpponentDisposal();
 
         Ship ship = opponent.makeShip(0, 0, 1, true);
 

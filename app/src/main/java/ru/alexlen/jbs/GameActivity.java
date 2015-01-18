@@ -5,7 +5,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.WindowManager;
+import ru.alexlen.jbs.game.Area;
+import ru.alexlen.jbs.game.BattleLogic;
 import ru.alexlen.jbs.game.DisposalLogic;
+import ru.alexlen.jbs.game.ShipsArea;
+import ru.alexlen.jbs.game.ai.OpponentBattle;
+import ru.alexlen.jbs.game.ai.OpponentDisposal;
 import ru.alexlen.jbs.ui.Styles;
 
 /**
@@ -38,16 +43,24 @@ public class GameActivity extends Activity implements SurfaceHolder.Callback {
 
     }
 
-    private void startDisposal() {
-        controller = new ControllerDisposal(new DisposalLogic(), new ViewDisposal(view));
+    void startDisposal() {
+        controller = new ControllerDisposal(this, new DisposalLogic(), new ViewDisposal(view));
     }
 
 //
-//    private void startBattle()
-//    {
-//        BattleViewController viewController = new BattleViewController(view);
-//        new ControllerBattle(new BattleLogic(null, null), viewController);
-//    }
+    void startBattle(Area playerArea)
+    {
+        OpponentDisposal opponentDisposal = new OpponentDisposal();
+
+        ShipsArea opponentShips = opponentDisposal.makeShips();
+        OpponentBattle opponent = new OpponentBattle(opponentShips);
+
+        BattleLogic logic = new BattleLogic(playerArea, opponentShips.getArea());
+
+        ControllerBattle controller = new ControllerBattle(this, logic, playerArea, opponent, new ViewBattle(view));
+
+        controller.start();
+    }
 
 
     @Override

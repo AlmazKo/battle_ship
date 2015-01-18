@@ -16,6 +16,7 @@ public final class GameEvent implements CellAction {
         this.cell = cell;
     }
 
+    @Override
     public boolean isCellRecognized() {
         return cell != null;
     }

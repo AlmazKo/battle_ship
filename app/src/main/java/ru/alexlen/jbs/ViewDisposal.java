@@ -17,9 +17,9 @@ import ru.alexlen.jbs.ui.Styles;
 /**
  * @author Almazko
  */
-public class ViewDisposal extends AbstractViewController {
+public class ViewDisposal extends AbstractView {
 
-    final static String TAG = "DisposalView";
+    final static String TAG = "ViewDisposal";
     Area area;
     Grid grid;
 
@@ -92,7 +92,7 @@ public class ViewDisposal extends AbstractViewController {
         public void draw(@NotNull final Canvas canvas) {
 
             canvas.drawColor(Color.BLACK);
-            canvas.drawText("Расстановка кораблей", 150, 50, Styles.get("text_title"));
+            canvas.drawText("Расстановка кораблей", 50, 50, Styles.get("text_title"));
             grid = new Grid(canvas, 10);
             grid.setPosition(0,100);
 

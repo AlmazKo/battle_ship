@@ -11,14 +11,14 @@ import static junit.framework.Assert.assertEquals;
 public class OpponentTest {
     @Test
     public void makeShips() {
-        Opponent opponent;
+        OpponentDisposal opponent;
 
         final byte attempts = 20;
         byte success = 0;
         ShipsArea area;
 
         for (byte i = 0; i < attempts; i++) {
-            opponent = new Opponent();
+            opponent = new OpponentDisposal();
             area = opponent.makeShips();
 
             if (area.ships.size() == 10) {
@@ -32,7 +32,7 @@ public class OpponentTest {
 
     @Test
     public void makeShip() {
-        Opponent opponent = new Opponent();
+        OpponentDisposal opponent = new OpponentDisposal();
 
         Ship ship = opponent.makeShip(0, 0, 1, true);
 

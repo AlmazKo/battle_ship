@@ -15,17 +15,19 @@ import java.util.Random;
  * Time: 10:36 PM
  * To change this template use File | Settings | File Templates.
  */
-public class Opponent {
+public class OpponentDisposal {
 
     Cell lastTarget = new Cell(0, 0);
     public  ShipsArea shipsArea      = new ShipsArea();
+
+    //TODO get from Logic
     private int[]     availShips     = {4, 3, 3, 2, 2, 2, 1, 1, 1, 1};
     public  ShipsArea enemyShipsArea = new ShipsArea();
     Random random = new Random();
     //   Game.StrikeResult result;
     private ZoneFinder zoneFinder;
 
-    public Opponent() {
+    public OpponentDisposal() {
         zoneFinder = new ZoneFinder(shipsArea.getArea());
     }
 

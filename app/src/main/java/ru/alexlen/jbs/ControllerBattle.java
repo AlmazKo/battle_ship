@@ -2,20 +2,37 @@ package ru.alexlen.jbs;
 
 import ru.alexlen.jbs.event.CellAction;
 import ru.alexlen.jbs.event.CellActionListener;
+import ru.alexlen.jbs.game.Area;
 import ru.alexlen.jbs.game.BattleLogic;
+import ru.alexlen.jbs.game.Player;
+import ru.alexlen.jbs.game.ShipsArea;
 
 /**
  * @author Almazko
  */
 public class ControllerBattle implements CellActionListener {
 
-    private final BattleLogic          logic;
-    private       BattleViewController view;
+    private       GameActivity mActivity;
+    private final BattleLogic  logic;
+    private       Area         mPayerArea;
+    private       Player       mOpponent;
+    private       ViewBattle   mView;
 
-    public ControllerBattle(BattleLogic logic, BattleViewController viewController) {
+    private ShipsArea opponentsArea = new ShipsArea();
+
+    public ControllerBattle(GameActivity activity, BattleLogic logic, Area playerArea, Player opponent,
+                            ViewBattle viewController) {
+        mActivity = activity;
         this.logic = logic;
-        view = viewController;
-        view.setCellActionListener(this);
+        mPayerArea = playerArea;
+        mOpponent = opponent;
+        mView = viewController;
+        mView.setCellActionListener(this);
+    }
+
+
+    public void start() {
+        mView.drawCommittedShips(opponentsArea.getArea(), mPayerArea);
     }
 
     @Override
@@ -41,7 +58,7 @@ public class ControllerBattle implements CellActionListener {
 //                break;
 //        }
 //
-//        view.
+//        mView.
 //
 //        if (result != BattleLogic.StrikeResult.ALREADY) {
 //

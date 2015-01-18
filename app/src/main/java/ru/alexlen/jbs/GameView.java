@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.os.Vibrator;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import org.jetbrains.annotations.NotNull;
@@ -20,11 +21,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private DrawThread drawThread;
     private BlockingDeque<RenderTask> queue = new LinkedBlockingDeque<>();
 
-
     public GameView(Context context, AttributeSet attrs)
     {
         super(context, attrs);
-
     }
 
     public GameView(Context context)
@@ -41,7 +40,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     synchronized void addRenderTask(@NotNull final RenderTask task)
     {
-        queue.push(task);
+        Log.d(TAG, "push task: " + task);
+        queue.addLast(task);
     }
 
     @Override

@@ -12,6 +12,7 @@ import java.util.LinkedList;
 public class ControllerDisposal implements CellActionListener {
 
     private final static String TAG = "ControllerDisposal";
+    private GameActivity mActivity;
 
     enum Direction {VERTICAL, HORIZONTAL}
 
@@ -25,7 +26,8 @@ public class ControllerDisposal implements CellActionListener {
 
     final AvailableShips mAvailShips;
 
-    public ControllerDisposal(DisposalLogic logic, ViewDisposal view) {
+    public ControllerDisposal(GameActivity activity, DisposalLogic logic, ViewDisposal view) {
+        mActivity = activity;
         mAvailShips = logic.getAvailableShips();
         mView = view;
         view.setCellActionListener(this);
@@ -131,13 +133,13 @@ public class ControllerDisposal implements CellActionListener {
         shipsArea.add(mDraftShip);
         Log.d(TAG, "commit: " + mDraftShip);
 
-//        if (mAvailShips.isEndedAllShips()) {
-//            // notify
-//        }
-
         mAvailShips.remove(mDraftShip.size());
         mDraftShip = null;
         mView.drawCommittedShips(shipsArea.getArea());
+
+        if (mAvailShips.isEndedAllShips()) {
+            mActivity.startBattle(shipsArea.getArea());
+        }
     }
 
     private Ship recognizeShip(final Cell targetCell) {
