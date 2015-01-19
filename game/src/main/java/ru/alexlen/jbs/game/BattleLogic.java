@@ -12,9 +12,9 @@ public class BattleLogic {
     private final Area playersArea;
     private final Area opponentsArea;
 
-    public BattleLogic(@NotNull Area playersArea, @NotNull Area opponentsArea) {
-        this.playersArea = playersArea.cloneArea();
-        this.opponentsArea = opponentsArea.cloneArea();
+    public BattleLogic(@NotNull ShipsArea playersArea, @NotNull ShipsArea opponentsArea) {
+        this.playersArea = playersArea.getArea().cloneArea();
+        this.opponentsArea = opponentsArea.getArea().cloneArea();
 
         choiceFirstPlayer();
     }

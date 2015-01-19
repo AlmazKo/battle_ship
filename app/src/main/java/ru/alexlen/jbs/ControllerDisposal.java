@@ -138,7 +138,7 @@ public class ControllerDisposal implements CellActionListener {
         mView.drawCommittedShips(shipsArea.getArea());
 
         if (mAvailShips.isEndedAllShips()) {
-            mActivity.startBattle(shipsArea.getArea());
+            mActivity.startBattle(shipsArea);
         }
     }
 

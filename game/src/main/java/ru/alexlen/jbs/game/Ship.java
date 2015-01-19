@@ -3,6 +3,7 @@ package ru.alexlen.jbs.game;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.LinkedList;
 
@@ -27,9 +28,9 @@ public class Ship implements Cloneable {
         this.cells = new LinkedList<>(cells);
     }
 
-    public Ship(final Cell cell) {
+    public Ship(Cell ...aCells) {
         cells = new LinkedList<>();
-        cells.add(cell);
+        Collections.addAll(cells, aCells);
         direction = Direction.VERTICAL;
     }
 
