@@ -1,8 +1,7 @@
-package ru.alexlen.jbs;
+package ru.alexlen.jbs.game;
 
 import org.junit.Before;
 import org.junit.Test;
-import ru.alexlen.jbs.game.AvailableShips;
 
 import static org.junit.Assert.*;
 
