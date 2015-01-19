@@ -2,19 +2,29 @@ package ru.alexlen.jbs.game;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
+import static ru.alexlen.jbs.game.BattleLogic.StrikeResult.*;
+
 public class BattleLogic {
 
     public enum Player {PROTAGONIST, OPPONENT}
+
     public enum StrikeResult {MISS, ALREADY, HIT, KILL}
+
+    Set<Cell> playersTurns  = new LinkedHashSet<>();
+    Set<Cell> opponentTurns = new LinkedHashSet<>();
+
 
     public Player currentPlayer;
 
-    private final Area playersArea;
-    private final Area opponentsArea;
+    private final ShipsArea playerShips;
+    private final ShipsArea opponentsShips;
 
     public BattleLogic(@NotNull ShipsArea playersArea, @NotNull ShipsArea opponentsArea) {
-        this.playersArea = playersArea.getArea().cloneArea();
-        this.opponentsArea = opponentsArea.getArea().cloneArea();
+        this.playerShips = playersArea.copy();
+        this.opponentsShips = opponentsArea.copy();
 
         choiceFirstPlayer();
     }
@@ -26,32 +36,48 @@ public class BattleLogic {
     @NotNull
     public StrikeResult strike(Cell cell) {
 
-        final Area targetArea = isProtagonist() ? opponentsArea : playersArea;
-        final int target = targetArea.get(cell.x, cell.y);
+        if (isProtagonist() && playersTurns.contains(cell)) return ALREADY;
+        if (!isProtagonist() && opponentTurns.contains(cell)) return ALREADY;
 
-        if ((target & Area.FIRED) > 0) {
-            return StrikeResult.ALREADY;
+        final ShipsArea targetShips = isProtagonist() ? opponentsShips : playerShips;
+
+
+        for (Ship ship : targetShips.ships) {
+            if (ship.strike(cell)) {
+                return ship.getLife() > 0 ? HIT : KILL;
+            }
         }
 
-        targetArea.set(cell.x, cell.y, target + Area.FIRED);
+        nextPlayer();
+        return MISS;
 
-        if ((target & Area.SHIP) > 0) {
-            return StrikeResult.HIT;
-        } else {
-            nextPlayer();
-            return StrikeResult.MISS;
-        }
+//
+//        int target = targetArea.get(cell.x, cell.y);
+//
+//
+//        targetArea.set(cell.x, cell.y, target + Area.FIRED);
+//
+//        if ((target & Area.SHIP) > 0) {
+//            return HIT;
+//        } else {
+//            nextPlayer();
+//            return StrikeResult.MISS;
+//        }
     }
 
-
-    public Area getProtagonistArea() {
-
-        return playersArea;
-    }
+//
+//    public Area getProtagonistArea() {
+//
+//        return playerShips;
+//    }
 
 
     public boolean isProtagonist() {
         return currentPlayer == Player.PROTAGONIST;
+    }
+
+    public Player getCurrentPlayer() {
+        return currentPlayer;
     }
 
     private void nextPlayer() {

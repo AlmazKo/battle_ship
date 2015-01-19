@@ -50,6 +50,7 @@ public class ShipsArea implements Iterable<Ship> {
 
         return true;
     }
+
     public boolean freeSpaceForShip(Ship ship) {
 
         for (Cell cell : ship.getCells()) {
@@ -60,5 +61,14 @@ public class ShipsArea implements Iterable<Ship> {
 
         return true;
 
+    }
+
+    public ShipsArea copy() {
+        ShipsArea result = new ShipsArea();
+        for (Ship ship : ships) {
+            result.add(ship.copy());
+        }
+
+        return result;
     }
 }

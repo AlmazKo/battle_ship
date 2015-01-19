@@ -2,17 +2,35 @@ package ru.alexlen.jbs.game;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.LinkedList;
+import java.util.*;
 
 /**
  * Value object
  */
-public class Ship implements Cloneable {
+public class Ship {
     private final Deque<Cell> cells;
-    private final Direction   direction;
+
+    private final Set<Cell> wrongCells;
+    private       byte      life;
+    private final Direction direction;
+
+    public boolean strike(Cell cell) {
+        if (wrongCells.contains(cell)) return false;
+
+        for (Cell shipCell : cells) {
+            if (shipCell.equals(cell)) {
+                wrongCells.add(cell);
+                life--;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public byte getLife() {
+        return life;
+    }
 
     public static enum Direction {VERTICAL, HORIZONTAL}
 
@@ -21,17 +39,36 @@ public class Ship implements Cloneable {
     public Ship(@NotNull Deque<Cell> cells, @NotNull Direction direction) {
         this.direction = direction;
         this.cells = cells;
+
+        life = (byte) cells.size();
+        wrongCells = new HashSet<>(life);
     }
 
     public Ship(@NotNull Collection<Cell> cells, @NotNull Direction direction) {
         this.direction = direction;
         this.cells = new LinkedList<>(cells);
+
+        life = (byte) cells.size();
+        wrongCells = new HashSet<>(life);
     }
 
-    public Ship(Cell ...aCells) {
+    public Ship(Cell... aCells) {
+
+        if (aCells.length == 0) {
+            throw new IllegalArgumentException("No cells for creating ship!");
+        }
+
         cells = new LinkedList<>();
         Collections.addAll(cells, aCells);
-        direction = Direction.VERTICAL;
+
+        if (cells.getFirst().x == cells.getLast().x) {
+            direction = Direction.VERTICAL;
+        } else {
+            direction = Direction.HORIZONTAL;
+        }
+
+        life = (byte) cells.size();
+        wrongCells = new HashSet<>(life);
     }
 
     public Deque<Cell> getCells() {
