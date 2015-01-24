@@ -111,13 +111,22 @@ public class Styles {
         paint.setStyle(Paint.Style.STROKE);
         styles.put("cell_blank", paint);
 
-        Typeface tf = Typeface.create("Helvetica", Typeface.ITALIC);
+        Typeface tf;
+        tf = Typeface.create("Helvetica", Typeface.ITALIC);
         paint = new Paint();
         paint.setColor(0xFF42aaff);
         paint.setAntiAlias(true);
         paint.setTextSize(gridCellOffset * 4);
         paint.setTypeface(tf);
         styles.put("text_title", paint);
+
+        tf = Typeface.create("Helvetica", Typeface.BOLD);
+        paint = new Paint();
+        paint.setColor(0xFF00DD73);
+        paint.setAntiAlias(true);
+        paint.setTextSize(gridCellOffset * 8);
+        paint.setTypeface(tf);
+        styles.put("text_win_title", paint);
 
 
 

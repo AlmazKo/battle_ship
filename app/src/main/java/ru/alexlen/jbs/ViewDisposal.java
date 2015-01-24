@@ -209,6 +209,8 @@ public class ViewDisposal extends AbstractView {
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         if (cellActionListener == null) return super.onTouch(v, event);
+        if (grid == null) return true;
+
         Log.v(TAG, "onTouch: " + event);
         cell = grid.recognizeCell(event.getX(), event.getY());
 

@@ -11,7 +11,7 @@ public class BattleLogic {
 
     public enum Player {PROTAGONIST, OPPONENT}
 
-    public enum StrikeResult {MISS, ALREADY, HIT, KILL}
+    public enum StrikeResult {MISS, ALREADY, HIT, KILL, WIN}
 
     Set<Cell> playersTurns  = new LinkedHashSet<>();
     Set<Cell> opponentTurns = new LinkedHashSet<>();
@@ -36,20 +36,39 @@ public class BattleLogic {
     @NotNull
     public StrikeResult strike(Cell cell) {
 
-        if (isProtagonist() && playersTurns.contains(cell)) return ALREADY;
-        if (!isProtagonist() && opponentTurns.contains(cell)) return ALREADY;
-
-        final ShipsArea targetShips = isProtagonist() ? opponentsShips : playerShips;
-
-
-        for (Ship ship : targetShips.ships) {
-            if (ship.strike(cell)) {
-                return ship.getLife() > 0 ? HIT : KILL;
-            }
+        ShipsArea targetShips;
+        Set<Cell> targetTurns;
+        if (isProtagonist()) {
+            targetShips = opponentsShips;
+            targetTurns = playersTurns;
+        } else {
+            targetShips = playerShips;
+            targetTurns = opponentTurns;
         }
 
-        nextPlayer();
-        return MISS;
+        if (targetTurns.contains(cell)) return ALREADY;
+        targetTurns.add(cell);
+
+        StrikeResult result = MISS;
+
+
+        int totalLife = 0;
+        int life;
+        for (Ship ship : targetShips.ships) {
+            if (ship.strike(cell)) {
+                life = ship.getLife();
+                if (life > 0)
+                    return HIT;
+                if (life == 0) result = KILL;
+            }
+
+            totalLife += ship.getLife();
+        }
+
+        if (totalLife == 0) return WIN;
+        if (result == MISS) nextPlayer();
+
+        return result;
 
 //
 //        int target = targetArea.get(cell.x, cell.y);

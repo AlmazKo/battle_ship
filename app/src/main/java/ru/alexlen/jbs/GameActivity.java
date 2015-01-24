@@ -42,6 +42,12 @@ public class GameActivity extends Activity implements SurfaceHolder.Callback {
 
     }
 
+    void restart() {
+        controller = new ControllerDisposal(this, new DisposalLogic(), new ViewDisposal(view));
+        controller.start();
+    }
+
+
     void startDisposal() {
         controller = new ControllerDisposal(this, new DisposalLogic(), new ViewDisposal(view));
     }

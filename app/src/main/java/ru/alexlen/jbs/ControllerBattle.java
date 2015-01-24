@@ -8,6 +8,7 @@ import ru.alexlen.jbs.game.*;
 import java.util.*;
 
 import static ru.alexlen.jbs.game.Area.SHIP;
+import static ru.alexlen.jbs.game.BattleLogic.StrikeResult.*;
 
 /**
  * @author Almazko
@@ -53,8 +54,12 @@ public class ControllerBattle implements CellActionListener {
         turn(knownShips, cell, result);
         mView.drawCommittedShips(knownShips.getArea(), playerShips.getArea());
 
+        if (result == WIN) {
+            mView.drawWin();
+            mView.setCellActionListener(null);
+        }
 
-        if (result != BattleLogic.StrikeResult.MISS) return;
+        if (result != MISS) return;
 
         waitOpponent();
     }
@@ -67,7 +72,7 @@ public class ControllerBattle implements CellActionListener {
         turn(playerShips, cell, result);
         mView.drawCommittedShips(knownShips.getArea(), playerShips.getArea());
 
-        if (result != BattleLogic.StrikeResult.MISS) waitOpponent();
+        if (result != MISS) waitOpponent();
     }
 
     private void turn(ShipsArea ships, Cell cell, BattleLogic.StrikeResult result) {
@@ -88,6 +93,7 @@ public class ControllerBattle implements CellActionListener {
                 areaFlags = areaFlags | SHIP | Area.FIRED;
                 ships.getArea().set(cell.x, cell.y, areaFlags);
                 break;
+            case WIN:
             case KILL:
                 areaFlags = areaFlags | SHIP | Area.FIRED;
                 ships.getArea().set(cell.x, cell.y, areaFlags);

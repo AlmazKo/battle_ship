@@ -82,7 +82,6 @@ public class ViewBattle extends AbstractView {
             for (x = 0; x < SIZE; x++) {
                 for (y = 0; y < SIZE; y++) {
                     target = area.get(x, y);
-                    //grid.drawCell(x, y, Styles.get("mini_ships_area"));
                     if ((target & SHIP) > 0) {
 
                         if ((target & FIRED) > 0) {
@@ -96,6 +95,7 @@ public class ViewBattle extends AbstractView {
 
         }
     };
+    private boolean isEnd;
 
 
     public ViewBattle(GameView view) {
@@ -109,13 +109,36 @@ public class ViewBattle extends AbstractView {
         view.addRenderTask(eDrawCommittedShips);
     }
 
+    public void drawWin() {
+        view.addRenderTask(new RenderTask() {
+            @Override
+            public void draw(@NotNull final Canvas canvas) {
+
+                canvas.drawColor(0x99000000);
+                canvas.drawText("Win battle!", 150, 450, Styles.get("text_win_title"));
+            }
+        });
+
+        isEnd = true;
+
+        view.setOnTouchListener(null);
+        view.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override public boolean onLongClick(View v) {
+
+                ((GameActivity) view.getContext()).restart();
+                return true;
+            }
+        });
+    }
+
 
     Cell cell;
-    Cell lastCell;
-    int  lastAction;
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
+
+        if (isEnd) return false;
+
         if (cellActionListener == null) return super.onTouch(v, event);
         Log.v(TAG, "onTouch: " + event);
         cell = opponentsGrid.recognizeCell(event.getX(), event.getY());
