@@ -12,6 +12,8 @@ import ru.alexlen.jbs.game.Cell;
 import ru.alexlen.jbs.ui.Grid;
 import ru.alexlen.jbs.ui.Styles;
 
+import static ru.alexlen.jbs.game.Area.*;
+
 /**
  * @author Almazko
  */
@@ -49,31 +51,41 @@ public class ViewBattle extends AbstractView {
 
 
             int target;
+            int x;
+            int y;
 
-            for (int x = 0; x < Area.SIZE; x++) {
-                for (int y = 0; y < Area.SIZE; y++) {
+            for (x = 0; x < SIZE; x++) {
+                for (y = 0; y < SIZE; y++) {
+                    if (area.is(x, y, SHIPS_AREA)) {
+                        grid.drawCell(x, y, Styles.get("ships_area"));
+                    }
+                }
+
+            }
+
+            for (x = 0; x < SIZE; x++) {
+                for (y = 0; y < SIZE; y++) {
                     target = area.get(x, y);
-                    if ((target & Area.FIRED) > 0 && (target & Area.SHIP) <= 0) {
+                    if ((target & FIRED) > 0 && (target & SHIP) <= 0) {
                         grid.drawCell(x, y, Styles.get("fared_area"));
                     }
                 }
             }
 
-
-            for (int x = 0; x < Area.SIZE; x++) {
-                for (int y = 0; y < Area.SIZE; y++) {
+            for (x = 0; x < SIZE; x++) {
+                for (y = 0; y < SIZE; y++) {
                     grid.drawCell(x, y, Styles.get("cell_blank"));
                 }
             }
 
 
-            for (int x = 0; x < Area.SIZE; x++) {
-                for (int y = 0; y < Area.SIZE; y++) {
+            for (x = 0; x < SIZE; x++) {
+                for (y = 0; y < SIZE; y++) {
                     target = area.get(x, y);
                     //grid.drawCell(x, y, Styles.get("mini_ships_area"));
-                    if ((target & Area.SHIP) > 0) {
+                    if ((target & SHIP) > 0) {
 
-                        if ((target & Area.FIRED) > 0) {
+                        if ((target & FIRED) > 0) {
                             grid.drawCell(x, y, Styles.get("wrong_ship"));
                         } else {
                             grid.drawCell(x, y, Styles.get("mini_ship"));
@@ -81,30 +93,7 @@ public class ViewBattle extends AbstractView {
                     }
                 }
             }
-        }
 
-        private void drawProtagonistShips(Area area, Grid grid) {
-            for (int x = 0; x < Area.SIZE; x++) {
-                for (int y = 0; y < Area.SIZE; y++) {
-                    int target = area.get(x, y);
-
-
-                    if ((target & Area.SHIP) > 0) {
-                        if ((target & Area.FIRED) > 0) {
-                            grid.drawCell(x, y, Styles.get("mini_wrong_ship"));
-                        } else {
-                            grid.drawCell(x, y, Styles.get("mini_ship"));
-                        }
-                    } else {
-                        if ((target & Area.FIRED) > 0) {
-                            grid.drawCell(x, y, Styles.get("mini_fared_area"));
-                        } else {
-//                            grid.drawCell(x, y, Styles.get("mini_ships_area"));
-                            grid.drawCell(x, y, Styles.get("cell_blank"));
-                        }
-                    }
-                }
-            }
         }
     };
 

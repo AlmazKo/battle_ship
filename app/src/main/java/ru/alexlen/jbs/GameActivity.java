@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.WindowManager;
-import ru.alexlen.jbs.game.Area;
 import ru.alexlen.jbs.game.BattleLogic;
 import ru.alexlen.jbs.game.DisposalLogic;
 import ru.alexlen.jbs.game.ShipsArea;
@@ -58,10 +57,9 @@ public class GameActivity extends Activity implements SurfaceHolder.Callback {
         BattleLogic logic = new BattleLogic(playerShips, opponentShips);
 
 
-        Log.d("GameActivity", opponentShips.getArea().toString());
+        Log.w("GameActivity", "Opponent map:\n" + opponentShips.getArea().toString());
 
-        ControllerBattle controller = new ControllerBattle(this, logic, playerShips.getArea(), opponent,
-                new ViewBattle(view));
+        ControllerBattle controller = new ControllerBattle(this, logic, playerShips, opponent, new ViewBattle(view));
 
         controller.start();
     }

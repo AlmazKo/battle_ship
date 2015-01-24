@@ -1,6 +1,8 @@
 package ru.alexlen.jbs.game;
 
-public class Cell {
+import java.util.Comparator;
+
+public class Cell implements Comparator<Cell> {
 
     public final int x;
     public final int y;
@@ -17,6 +19,10 @@ public class Cell {
 
     public boolean equals(int x, int y) {
         return this.x == x && this.y == y;
+    }
+
+    @Override public int compare(Cell o1, Cell o2) {
+        return 0;
     }
 
     @Override

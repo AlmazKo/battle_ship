@@ -3,10 +3,11 @@ package ru.alexlen.jbs;
 import android.util.Log;
 import ru.alexlen.jbs.event.CellAction;
 import ru.alexlen.jbs.event.CellActionListener;
-import ru.alexlen.jbs.game.Area;
-import ru.alexlen.jbs.game.BattleLogic;
-import ru.alexlen.jbs.game.Cell;
-import ru.alexlen.jbs.game.Player;
+import ru.alexlen.jbs.game.*;
+
+import java.util.*;
+
+import static ru.alexlen.jbs.game.Area.SHIP;
 
 /**
  * @author Almazko
@@ -15,17 +16,19 @@ public class ControllerBattle implements CellActionListener {
 
     private       GameActivity mActivity;
     private final BattleLogic  logic;
-    private       Area         mPayerArea;
+//    private       Area         mPayerArea;
     private       Player       mOpponent;
     private       ViewBattle   mView;
 
-    private Area knownArea = new Area();
+    //    private Area      knownArea = new Area();
+    private ShipsArea knownShips = new ShipsArea();
+    private ShipsArea playerShips = new ShipsArea();
 
-    public ControllerBattle(GameActivity activity, BattleLogic logic, Area playerArea, Player opponent,
+    public ControllerBattle(GameActivity activity, BattleLogic logic, ShipsArea playerArea, Player opponent,
                             ViewBattle viewController) {
         mActivity = activity;
         this.logic = logic;
-        mPayerArea = playerArea;
+        playerShips = playerArea;
         mOpponent = opponent;
         mView = viewController;
         mView.setCellActionListener(this);
@@ -33,7 +36,7 @@ public class ControllerBattle implements CellActionListener {
 
 
     public void start() {
-        mView.drawCommittedShips(knownArea, mPayerArea);
+        mView.drawCommittedShips(knownShips.getArea(), playerShips.getArea());
     }
 
     @Override
@@ -47,8 +50,8 @@ public class ControllerBattle implements CellActionListener {
 
         BattleLogic.StrikeResult result = logic.strike(action.getCell());
         Log.i("ControllerBattle", "BattleLogic: " + result + " in " + cell);
-        turn(knownArea, cell, result);
-        mView.drawCommittedShips(knownArea, mPayerArea);
+        turn(knownShips, cell, result);
+        mView.drawCommittedShips(knownShips.getArea(), playerShips.getArea());
 
 
         if (result != BattleLogic.StrikeResult.MISS) return;
@@ -61,33 +64,86 @@ public class ControllerBattle implements CellActionListener {
         BattleLogic.StrikeResult result = logic.strike(cell);
 
         Log.i("ControllerBattle", "BattleLogic opponent: " + result + " in " + cell);
-        turn(mPayerArea, cell, result);
-        mView.drawCommittedShips(knownArea, mPayerArea);
+        turn(playerShips, cell, result);
+        mView.drawCommittedShips(knownShips.getArea(), playerShips.getArea());
 
         if (result != BattleLogic.StrikeResult.MISS) waitOpponent();
     }
 
-    private void turn(Area area, Cell cell, BattleLogic.StrikeResult result) {
-        int areaFlags = area.get(cell.x, cell.y);
+    private void turn(ShipsArea ships, Cell cell, BattleLogic.StrikeResult result) {
+
+
+        int areaFlags = ships.getArea().get(cell.x, cell.y);
 
         switch (result) {
             case MISS:
                 areaFlags = areaFlags | Area.FIRED;
+                ships.getArea().set(cell.x, cell.y, areaFlags);
                 break;
 
             case ALREADY:
                 return;
 
             case HIT:
-                areaFlags = areaFlags | Area.SHIP | Area.FIRED;
+                areaFlags = areaFlags | SHIP | Area.FIRED;
+                ships.getArea().set(cell.x, cell.y, areaFlags);
                 break;
             case KILL:
-                areaFlags = areaFlags | Area.SHIP | Area.FIRED;
+                areaFlags = areaFlags | SHIP | Area.FIRED;
+                ships.getArea().set(cell.x, cell.y, areaFlags);
+
+                ships.add(getShip(ships.getArea(), cell));
+
                 break;
         }
 
-
-        area.set(cell.x, cell.y, areaFlags);
     }
 
+    private Ship getShip(Area area, Cell cell) {
+
+        if (area.has(cell.x + 1, cell.y, SHIP) || area.has(cell.x - 1, cell.y, SHIP)) {
+            return new Ship(horizontalSearch(area, cell), Ship.Direction.HORIZONTAL);
+
+        } else if (area.has(cell.x, cell.y + 1, SHIP) || area.has(cell.x, cell.y - 1, SHIP)) {
+            return new Ship(verticalSearch(area, cell), Ship.Direction.VERTICAL);
+
+        } else {
+            return new Ship(cell);
+        }
+    }
+
+    public static Collection<Cell> horizontalSearch(Area area, Cell cell) {
+
+        Collection<Cell> cells = new LinkedList<>();
+
+        int left = cell.x;
+
+        for (int i = left - 1; i >= 0 && area.has(i, cell.y, SHIP); i--) {
+            left = i;
+        }
+
+        while (area.has(left, cell.y, SHIP)) {
+            cells.add(new Cell(left, cell.y));
+            left++;
+        }
+
+        return cells;
+    }
+
+    public static Collection<Cell> verticalSearch(Area area, Cell cell) {
+        Collection<Cell> cells = new LinkedList<>();
+
+        int top = cell.y;
+
+        for (int i = top - 1; i >= 0 && area.has(cell.x, i, SHIP); i--) {
+            top = i;
+        }
+
+        while (area.has(cell.x, top, SHIP)) {
+            cells.add(new Cell(cell.x, top));
+            top++;
+        }
+
+        return cells;
+    }
 }

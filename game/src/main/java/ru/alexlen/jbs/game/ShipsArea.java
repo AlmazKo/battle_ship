@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import static ru.alexlen.jbs.game.Area.SHIP;
+import static ru.alexlen.jbs.game.Area.SHIPS_AREA;
+
 public class ShipsArea implements Iterable<Ship> {
     final Area area;
     public Collection<Ship> ships = new ArrayList<>();
@@ -27,25 +30,26 @@ public class ShipsArea implements Iterable<Ship> {
 
     public boolean add(Ship ship) {
 
-        if (!freeSpaceForShip(ship)) {
-            return false;
-        }
+//        if (!freeSpaceForShip(ship)) {
+//            return false;
+//        }
 
         ships.add(ship);
 
         for (Cell cell : ship.getCells()) {
-            area.set(cell.x + 1, cell.y - 1, Area.SHIPS_AREA);
-            area.set(cell.x + 1, cell.y, Area.SHIPS_AREA);
-            area.set(cell.x + 1, cell.y + 1, Area.SHIPS_AREA);
-            area.set(cell.x, cell.y - 1, Area.SHIPS_AREA);
-            area.set(cell.x, cell.y + 1, Area.SHIPS_AREA);
-            area.set(cell.x - 1, cell.y - 1, Area.SHIPS_AREA);
-            area.set(cell.x - 1, cell.y, Area.SHIPS_AREA);
-            area.set(cell.x - 1, cell.y + 1, Area.SHIPS_AREA);
+            area.setFlag(cell.x + 1, cell.y - 1,SHIPS_AREA);
+            area.setFlag(cell.x + 1, cell.y,SHIPS_AREA);
+            area.setFlag(cell.x + 1, cell.y + 1,SHIPS_AREA);
+            area.setFlag(cell.x, cell.y - 1,SHIPS_AREA);
+            area.setFlag(cell.x, cell.y + 1,SHIPS_AREA);
+            area.setFlag(cell.x - 1, cell.y - 1,SHIPS_AREA);
+            area.setFlag(cell.x - 1, cell.y, SHIPS_AREA);
+            area.setFlag(cell.x - 1, cell.y + 1, SHIPS_AREA);
         }
 
         for (Cell cell : ship.getCells()) {
-            area.set(cell.x, cell.y, Area.SHIP);
+            area.setFlag(cell.x, cell.y, SHIP);
+            area.removeFlag(cell.x, cell.y, SHIPS_AREA);
         }
 
         return true;
