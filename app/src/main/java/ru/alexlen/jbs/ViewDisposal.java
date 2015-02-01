@@ -1,12 +1,13 @@
 package ru.alexlen.jbs;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ru.alexlen.jbs.event.GameEvent;
 import ru.alexlen.jbs.game.Area;
 import ru.alexlen.jbs.game.Cell;
@@ -20,90 +21,42 @@ import ru.alexlen.jbs.ui.Styles;
 public class ViewDisposal extends AbstractView {
 
     final static String TAG = "ViewDisposal";
-    Area area;
     Grid grid;
+    private Area lastArea;
+
+
+    Rect canvasArea;
 
     public ViewDisposal(GameView view) {
         super(view);
-    }
 
-    class Style {
-
-        protected int reviewPlaceX, reviewPlaceY;
-        protected int reviewCellSpacing;
-        protected int fontSize, reviewCellSize;
-        protected int shipCounter;
-
-        protected Paint textPaint           = new Paint();
-        protected Paint availShipsPreview   = new Paint();
-        protected Paint shipsCounter        = new Paint();
-        protected Paint noAvailShipsPreview = new Paint();
-        protected Canvas canvas;
-
-        public Style(Canvas canvas) {
-            this.canvas = canvas;
-
-            initStyles();
-        }
-
-
-        protected void initStyles() {
-
-            int minCanvasSize = Math.min(canvas.getHeight(), canvas.getWidth());
-
-            if (minCanvasSize < 400) {
-                reviewCellSpacing = 1;
-                fontSize = 12;
-                reviewCellSize = 14;
-                shipCounter = 3;
-            } else if (minCanvasSize < 700) {
-                reviewCellSpacing = 2;
-                fontSize = 14;
-                reviewCellSize = 14;
-                shipCounter = 4;
-            } else {
-                reviewCellSpacing = 3;
-                fontSize = 16;
-                reviewCellSize = 14;
-                shipCounter = 4;
-            }
-
-            shipsCounter.setColor(0xFFFF0000);
-            shipsCounter.setAntiAlias(true);
-            shipsCounter.setStyle(Paint.Style.FILL);
-            shipsCounter.setShadowLayer(reviewCellSpacing, 0, 0, 0xFFFF0000);
-
-            availShipsPreview.setColor(0xFF00DD73);
-            availShipsPreview.setAntiAlias(true);
-            availShipsPreview.setStyle(Paint.Style.FILL);
-            availShipsPreview.setShadowLayer(reviewCellSpacing, 0, 0, 0xFF00FF00);
-
-            noAvailShipsPreview.setColor(0xFF666666);
-            noAvailShipsPreview.setAntiAlias(true);
-            noAvailShipsPreview.setStyle(Paint.Style.FILL);
-            noAvailShipsPreview.setShadowLayer(reviewCellSpacing, 0, 0, 0xFFAAAAAA);
-        }
+        grid = new Grid(10, 300);
+        grid.setPosition(0, 100);
 
     }
 
+    class ShipsDrawer implements AreaRenderTask {
 
-    RenderTask eDrawCommittedShips = new RenderTask() {
+        final Area area;
+
+        private ShipsDrawer(Area area) {
+            this.area = area;
+        }
+
         @Override
         public void draw(@NotNull final Canvas canvas) {
 
-            canvas.drawColor(Color.BLACK);
             canvas.drawText("Расстановка кораблей", 50, 50, Styles.get("text_title"));
-            grid = new Grid(canvas, 10);
-            grid.setPosition(0,100);
 
 
+            Grid.Drawer drawer = grid.getDrawer(canvas);
             //Log.i("MAP", area.toString());
 
             for (int x = 0; x < Area.SIZE; x++) {
                 for (int y = 0; y < Area.SIZE; y++) {
                     switch (area.get(x, y)) {
                         case Area.SHIPS_AREA:
-                            grid.drawCell(x, y, Styles.get("ships_area"));
+                            drawer.drawCell(x, y, Styles.get("ships_area"));
                             break;
                         default:
                     }
@@ -115,44 +68,83 @@ public class ViewDisposal extends AbstractView {
                 for (int y = 0; y < Area.SIZE; y++) {
                     switch (area.get(x, y)) {
                         case Area.SHIP:
-                            grid.drawCell(x, y, Styles.get("ship"));
+                            drawer.drawCell(x, y, Styles.get("ship"));
                             break;
                         default:
-                            grid.drawCell(x, y, Styles.get("cell_blank"));
+                            drawer.drawCell(x, y, Styles.get("cell_blank"));
                     }
                 }
             }
         }
 
-    };
-
-    public void drawCommittedShips(@NotNull Area area) {
-        this.area = area;
-        view.addRenderTask(eDrawCommittedShips);
+        @Nullable @Override public Rect getArea() {
+            return grid.getRect();
+        }
     }
 
+    public void drawCommittedShips(@NotNull Area area) {
 
-    public void drawDraftShip(@NotNull final Ship draftShip, final boolean possible) {
+        detectSize();
+        lastArea = area.cloneArea();
+        view.addRenderTask(new ShipsDrawer(lastArea));
+    }
+
+    boolean needDetect = true;
+
+    private void detectSize() {
+        if (!needDetect) return;
+
+        needDetect = false;
+
         view.addRenderTask(new RenderTask() {
-            @Override
-            public void draw(@NotNull final Canvas canvas) {
-                eDrawCommittedShips.draw(canvas);
+            @Override public void draw(@NotNull Canvas canvas) {
 
+                canvasArea = canvas.getClipBounds();
+                canvasArea.offsetTo(3, 3);
 
-                Paint paint;
-                if (possible) {
-                    paint = Styles.get("draft_ship");
-                } else {
-                    paint = Styles.get("wrong_ship");
-                }
-
-                Log.d("RenderTask", "draft: " + draftShip);
-                for (Cell cell : draftShip.getCells()) {
-                    grid.drawCell(cell, paint);
-                }
+                grid.setSize(Math.min(canvasArea.right, canvasArea.bottom) - 1);
             }
         });
 
+    }
+
+
+    class DraftShipDrawer implements RenderTask {
+
+        final         Ship    draftShip;
+        private final boolean possible;
+
+        DraftShipDrawer(Ship draftShip, boolean possible) {
+            this.draftShip = draftShip;
+            this.possible = possible;
+        }
+
+        @Override
+        public void draw(@NotNull final Canvas canvas) {
+            // eDrawCommittedShips.draw(canvas);
+
+            Grid.Drawer drawer = grid.getDrawer(canvas);
+
+            Paint paint;
+            if (possible) {
+                paint = Styles.get("draft_ship");
+            } else {
+                paint = Styles.get("wrong_ship");
+            }
+
+            for (Cell cell : draftShip.getCells()) {
+                drawer.drawCell(cell, paint);
+            }
+        }
+
+    }
+
+    public void drawDraftShip(@NotNull final Ship draftShip, final boolean possible) {
+
+        view.addRenderTask(new RenderTaskSet(grid.getRect(),
+                new ShipsDrawer(lastArea),
+                new DraftShipDrawer(draftShip.copy(), possible)
+        ));
     }
 
     private boolean isVertical(Canvas canvas) {
@@ -206,8 +198,37 @@ public class ViewDisposal extends AbstractView {
     Cell lastCell;
     int  lastAction;
 
+
+    private static final class TouchInfoTask implements AreaRenderTask {
+
+        private final Rect rect;
+        private final int  x;
+        private final int  y;
+
+        TouchInfoTask(final MotionEvent event, Rect area) {
+
+            x = (int) event.getX();
+            y = (int) event.getY();
+            rect = new Rect(area);
+            rect.left = rect.right - 200;
+            rect.top = rect.bottom - 20;
+        }
+
+        @Override public void draw(@NotNull Canvas canvas) {
+            canvas.drawRect(getArea(), Styles.get("none"));
+            canvas.drawText(x + ":" + y, rect.left, rect.bottom, Styles.get("text_main"));
+        }
+
+        @Nullable @Override public Rect getArea() {
+            return rect;
+        }
+    }
+
     @Override
-    public boolean onTouch(View v, MotionEvent event) {
+    public boolean onTouch(View v, final MotionEvent event) {
+
+        view.addRenderTask(new TouchInfoTask(event, canvasArea));
+
         if (cellActionListener == null) return super.onTouch(v, event);
         if (grid == null) return true;
 
@@ -217,7 +238,7 @@ public class ViewDisposal extends AbstractView {
 
         //if (cell == null) return true;// TEMP
 
-         if (cell == lastCell && event.getAction() == lastAction) return true;
+        if (cell == lastCell && event.getAction() == lastAction) return true;
 
         lastCell = cell;
         lastAction = event.getAction();

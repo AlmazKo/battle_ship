@@ -1,11 +1,12 @@
 package ru.alexlen.jbs;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
+import android.graphics.Rect;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ru.alexlen.jbs.event.GameEvent;
 import ru.alexlen.jbs.game.Area;
 import ru.alexlen.jbs.game.Cell;
@@ -19,35 +20,34 @@ import static ru.alexlen.jbs.game.Area.*;
  */
 public class ViewBattle extends AbstractView {
 
-    final static String TAG = "ViewBattle";
+    private class ShipsDrawer implements RenderTask {
+
+        final Area knownArea;
+        final Area protagonistArea;
 
 
-    Area knownArea;
-    Area protagonistArea;
-    Grid opponentsGrid;
-    Grid playersGrid;
+        private ShipsDrawer(Area knownArea, Area protagonistArea) {
+            this.knownArea = knownArea;
+            this.protagonistArea = protagonistArea;
+        }
 
-    RenderTask eDrawCommittedShips = new RenderTask() {
         @Override
         public void draw(@NotNull final Canvas canvas) {
 
 
-            canvas.drawColor(Color.BLACK);
+            canvas.drawColor(0x99000000);
             canvas.drawText("Бой", 50, 50, Styles.get("text_title"));
 
-
-            opponentsGrid = new Grid(canvas, Area.SIZE);
-            playersGrid = new Grid(canvas, Area.SIZE, 300);
             playersGrid.setPosition(10, opponentsGrid.size() + 10);
 
 
-            drawShips(protagonistArea, playersGrid);
-            drawShips(knownArea, opponentsGrid);
+            drawShips(protagonistArea, playersGrid.getDrawer(canvas));
+            drawShips(knownArea, opponentsGrid.getDrawer(canvas));
 
         }
 
 
-        private void drawShips(Area area, Grid grid) {
+        private void drawShips(Area area, Grid.Drawer grid) {
 
 
             int target;
@@ -94,28 +94,73 @@ public class ViewBattle extends AbstractView {
             }
 
         }
-    };
-    private boolean isEnd;
+    }
 
+    private boolean isEnd;
+    final static String TAG = "ViewBattle";
+    Grid opponentsGrid;
+    Grid playersGrid;
+    Rect canvasArea;
 
     public ViewBattle(GameView view) {
         super(view);
+        opponentsGrid = new Grid(Area.SIZE, 100);
+        playersGrid = new Grid(Area.SIZE, 300);
+    }
+
+    public void drawCommittedShips(Area knownArea, Area protagonistArea) {
+
+        detectSize();
+        view.addRenderTask(new ShipsDrawer(knownArea.cloneArea(), protagonistArea.cloneArea()));
     }
 
 
-    public void drawCommittedShips(Area knownArea, Area protagonistArea) {
-        this.protagonistArea = protagonistArea;
-        this.knownArea = knownArea;
-        view.addRenderTask(eDrawCommittedShips);
+    boolean needDetect = true;
+
+    private void detectSize() {
+        if (!needDetect) return;
+
+        needDetect = false;
+
+        view.addRenderTask(new RenderTask() {
+            @Override public void draw(@NotNull Canvas canvas) {
+
+                canvasArea = canvas.getClipBounds();
+
+                int mainSize;
+                //is vertical
+                if (canvasArea.bottom > canvasArea.right) {
+
+                    mainSize = canvasArea.right;
+
+                    opponentsGrid.setSize(mainSize - 1);
+                    playersGrid.setPosition(1, mainSize);
+                    playersGrid.setSize(canvasArea.bottom - (int) (mainSize * 1.1));
+                } else {
+                    mainSize = canvasArea.bottom;
+
+                    opponentsGrid.setSize(mainSize - 1);
+                    playersGrid.setPosition(mainSize, 1);
+                    playersGrid.setSize(canvasArea.right - mainSize);
+                }
+
+            }
+        });
+
     }
 
     public void drawWin() {
-        view.addRenderTask(new RenderTask() {
+
+        view.addRenderTask(new ControlTask() {
             @Override
             public void draw(@NotNull final Canvas canvas) {
 
                 canvas.drawColor(0x99000000);
                 canvas.drawText("Win battle!", 150, 450, Styles.get("text_win_title"));
+            }
+
+            @Nullable @Override public Rect getArea() {
+                return new Rect(canvasArea);
             }
         });
 

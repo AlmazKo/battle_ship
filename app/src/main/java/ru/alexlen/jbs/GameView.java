@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import org.jetbrains.annotations.NotNull;
-import ru.alexlen.jbs.stage.AbstractController;
 import ru.alexlen.jbs.ui.Styles;
 
 import java.util.concurrent.BlockingDeque;
@@ -17,7 +16,6 @@ import java.util.concurrent.LinkedBlockingDeque;
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private static final String TAG = "GameView";
     Vibrator           vibrator;
-    AbstractController controller;
     private DrawThread drawThread;
     private BlockingDeque<RenderTask> queue = new LinkedBlockingDeque<>();
 
@@ -35,12 +33,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         setFocusableInTouchMode(true);
 
         vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-        getHolder().addCallback(this);
+      //  getHolder().addCallback(this);
     }
 
     synchronized void addRenderTask(@NotNull final RenderTask task)
     {
-        Log.d(TAG, "push task: " + task);
         queue.addLast(task);
     }
 
@@ -50,6 +47,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         drawThread = new DrawThread(holder, queue);
         drawThread.start();
 
+        ((GameActivity) getContext()).startDisposal();
 //        drawThread = new DrawThread(getHolder());
 //        drawThread.start();
 //        getHolder().addCallback(this);
@@ -94,17 +92,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         invalidate();
     }
 
-    public void setController(AbstractController controller)
-    {
-        this.controller = controller;
-        setOnTouchListener(controller);
-        reDraw();
-    }
-
 
     @Override
     protected void onDraw(Canvas canvas)
     {
+        Log.d("GameView", "onDraw" + canvas);
         super.onDraw(canvas);
     }
 

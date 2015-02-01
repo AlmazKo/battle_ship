@@ -33,8 +33,24 @@ public class Styles {
 
         paint = new Paint();
         paint.setStyle(Paint.Style.FILL);
+        paint.setColor(0xFF000000);
+        styles.put("none", paint);
+
+
+        paint = new Paint();
+        paint.setStyle(Paint.Style.FILL);
         paint.setColor(0xFF022244);
         styles.put("ships_area", paint);
+
+        paint = new Paint();
+        paint.setStyle(Paint.Style.FILL);
+        paint.setColor(0xFFFFFF66);
+        styles.put("panel", paint);
+        paint = new Paint();
+        paint.setStyle(Paint.Style.FILL);
+        paint.setColor(0x00000000);
+        styles.put("tpanel", paint);
+
 
         paint = new Paint();
         paint.setStyle(Paint.Style.FILL);
@@ -127,6 +143,16 @@ public class Styles {
         paint.setTextSize(gridCellOffset * 8);
         paint.setTypeface(tf);
         styles.put("text_win_title", paint);
+
+
+
+        tf = Typeface.create("Helvetica", Typeface.NORMAL);
+        paint = new Paint();
+        paint.setColor(0xFF008cf0);
+        paint.setAntiAlias(true);
+        paint.setTextSize(gridCellOffset * 2);
+        paint.setTypeface(tf);
+        styles.put("text_main", paint);
 
 
 

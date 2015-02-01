@@ -3,7 +3,6 @@ package ru.alexlen.jbs;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.SurfaceHolder;
 import android.view.WindowManager;
 import ru.alexlen.jbs.game.BattleLogic;
 import ru.alexlen.jbs.game.DisposalLogic;
@@ -19,7 +18,7 @@ import ru.alexlen.jbs.ui.Styles;
  * Time: 11:18 PM
  * To change this template use File | Settings | File Templates.
  */
-public class GameActivity extends Activity implements SurfaceHolder.Callback {
+public class GameActivity extends Activity {
 
     private GameView           view;
     private ControllerDisposal controller;
@@ -35,7 +34,8 @@ public class GameActivity extends Activity implements SurfaceHolder.Callback {
         Styles.fill(9);
 
         view = new GameView(this);
-        view.getHolder().addCallback(this);
+        view.getHolder().addCallback(view);
+        view.getHolder().setKeepScreenOn(true);
         setContentView(view);
 
         startDisposal();
@@ -50,6 +50,7 @@ public class GameActivity extends Activity implements SurfaceHolder.Callback {
 
     void startDisposal() {
         controller = new ControllerDisposal(this, new DisposalLogic(), new ViewDisposal(view));
+        controller.start();
     }
 
 //
@@ -71,16 +72,5 @@ public class GameActivity extends Activity implements SurfaceHolder.Callback {
     }
 
 
-    @Override
-    public void surfaceCreated(SurfaceHolder holder) {
-        controller.start();
-    }
-
-    @Override public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-
-    }
-
-    @Override public void surfaceDestroyed(SurfaceHolder holder) {
-
-    }
+//
 }
