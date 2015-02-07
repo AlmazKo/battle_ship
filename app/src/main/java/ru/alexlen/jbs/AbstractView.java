@@ -31,4 +31,8 @@ public abstract class AbstractView implements View.OnTouchListener {
     public boolean onTouch(View v, MotionEvent event) {
         return false;
     }
+
+    public void clear() {
+        view.removeAllTasks();
+    }
 }

@@ -46,6 +46,14 @@ public class ViewBattle extends AbstractView {
 
         }
 
+        @Override public int getZIndex() {
+            return 0;
+        }
+
+        @Override public int getId() {
+            return 0;
+        }
+
 
         private void drawShips(Area area, Grid.Drawer grid) {
 
@@ -123,6 +131,8 @@ public class ViewBattle extends AbstractView {
         needDetect = false;
 
         view.addRenderTask(new RenderTask() {
+            int id = view.getUniqueId();
+
             @Override public void draw(@NotNull Canvas canvas) {
 
                 canvasArea = canvas.getClipBounds();
@@ -145,6 +155,14 @@ public class ViewBattle extends AbstractView {
                 }
 
             }
+
+            @Override public int getZIndex() {
+                return 0;
+            }
+
+            @Override public int getId() {
+                return id;
+            }
         });
 
     }
@@ -152,11 +170,20 @@ public class ViewBattle extends AbstractView {
     public void drawWin() {
 
         view.addRenderTask(new ControlTask() {
+            int id = view.getUniqueId();
             @Override
             public void draw(@NotNull final Canvas canvas) {
 
                 canvas.drawColor(0x99000000);
                 canvas.drawText("Win battle!", 150, 450, Styles.get("text_win_title"));
+            }
+
+            @Override public int getZIndex() {
+                return 10000;
+            }
+
+            @Override public int getId() {
+                return id;
             }
 
             @Nullable @Override public Rect getArea() {
@@ -170,12 +197,12 @@ public class ViewBattle extends AbstractView {
         view.setOnLongClickListener(new View.OnLongClickListener() {
             @Override public boolean onLongClick(View v) {
 
+                view.removeAllTasks();
                 ((GameActivity) view.getContext()).restart();
                 return true;
             }
         });
     }
-
 
     Cell cell;
 

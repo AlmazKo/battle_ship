@@ -10,22 +10,19 @@ import android.view.SurfaceView;
 import org.jetbrains.annotations.NotNull;
 import ru.alexlen.jbs.ui.Styles;
 
-import java.util.concurrent.BlockingDeque;
-import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private static final String TAG = "GameView";
-    Vibrator           vibrator;
+    Vibrator vibrator;
     private DrawThread drawThread;
-    private BlockingDeque<RenderTask> queue = new LinkedBlockingDeque<>();
+    private final GraphStack stack = new GraphStack();
 
-    public GameView(Context context, AttributeSet attrs)
-    {
+    public GameView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public GameView(Context context)
-    {
+    public GameView(Context context) {
         super(context);
 
         // setLayerType(View.LAYER_TYPE_SOFTWARE, null);
@@ -33,18 +30,29 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         setFocusableInTouchMode(true);
 
         vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-      //  getHolder().addCallback(this);
+        //  getHolder().addCallback(this);
     }
 
-    synchronized void addRenderTask(@NotNull final RenderTask task)
-    {
-        queue.addLast(task);
+
+    private static AtomicInteger ainc = new AtomicInteger(100000);
+
+    public int getUniqueId() {
+        return ainc.getAndIncrement();
+    }
+
+    void removeTask(int id) {
+
+        stack.remove(id);
+
+    }
+
+    void addRenderTask(@NotNull RenderTask task) {
+        stack.add(task);
     }
 
     @Override
-    public void surfaceCreated(SurfaceHolder holder)
-    {
-        drawThread = new DrawThread(holder, queue);
+    public void surfaceCreated(SurfaceHolder holder) {
+        drawThread = new DrawThread(holder, stack);
         drawThread.start();
 
         ((GameActivity) getContext()).startDisposal();
@@ -54,15 +62,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height)
-    {
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
         int i = 10 + 10;
         i++;
     }
 
     @Override
-    public void surfaceDestroyed(SurfaceHolder holder)
-    {
+    public void surfaceDestroyed(SurfaceHolder holder) {
         boolean retry = true;
         // завершаем работу потока
         drawThread.kill();
@@ -77,32 +83,27 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
 
-    public void setGridOffset(int gridCellOffset)
-    {
+    public void setGridOffset(int gridCellOffset) {
         Styles.fill(gridCellOffset);
     }
 
-    public Vibrator getVibrator()
-    {
+    public Vibrator getVibrator() {
         return vibrator;
     }
 
-    public void reDraw()
-    {
+    public void reDraw() {
         invalidate();
     }
 
 
     @Override
-    protected void onDraw(Canvas canvas)
-    {
+    protected void onDraw(Canvas canvas) {
         Log.d("GameView", "onDraw" + canvas);
         super.onDraw(canvas);
     }
 
     @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec)
-    {
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int mTextWidth = 10;
         int minw = getPaddingLeft() + getPaddingRight() + getSuggestedMinimumWidth();
         int w = resolveSizeAndState(minw, widthMeasureSpec, 1);
@@ -115,4 +116,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         setMeasuredDimension(w, h);
     }
 
+    public void removeAllTasks() {
+        stack.removeAll();
+    }
 }

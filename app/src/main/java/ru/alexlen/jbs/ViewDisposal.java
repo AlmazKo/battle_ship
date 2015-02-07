@@ -77,6 +77,14 @@ public class ViewDisposal extends AbstractView {
             }
         }
 
+        @Override public int getZIndex() {
+            return 3;
+        }
+
+        @Override public int getId() {
+            return 0;
+        }
+
         @Nullable @Override public Rect getArea() {
             return grid.getRect();
         }
@@ -99,10 +107,19 @@ public class ViewDisposal extends AbstractView {
         view.addRenderTask(new RenderTask() {
             @Override public void draw(@NotNull Canvas canvas) {
 
+                view.removeTask(5);
                 canvasArea = canvas.getClipBounds();
                 canvasArea.offsetTo(3, 3);
 
                 grid.setSize(Math.min(canvasArea.right, canvasArea.bottom) - 1);
+            }
+
+            @Override public int getZIndex() {
+                return 0;
+            }
+
+            @Override public int getId() {
+                return 5;
             }
         });
 
@@ -121,7 +138,6 @@ public class ViewDisposal extends AbstractView {
 
         @Override
         public void draw(@NotNull final Canvas canvas) {
-            // eDrawCommittedShips.draw(canvas);
 
             Grid.Drawer drawer = grid.getDrawer(canvas);
 
@@ -135,6 +151,14 @@ public class ViewDisposal extends AbstractView {
             for (Cell cell : draftShip.getCells()) {
                 drawer.drawCell(cell, paint);
             }
+        }
+
+        @Override public int getZIndex() {
+            return 0;
+        }
+
+        @Override public int getId() {
+            return 2;
         }
 
     }
@@ -210,13 +234,21 @@ public class ViewDisposal extends AbstractView {
             x = (int) event.getX();
             y = (int) event.getY();
             rect = new Rect(area);
-            rect.left = rect.right - 200;
+            rect.left = rect.right - 100;
             rect.top = rect.bottom - 20;
         }
 
         @Override public void draw(@NotNull Canvas canvas) {
             canvas.drawRect(getArea(), Styles.get("none"));
-            canvas.drawText(x + ":" + y, rect.left, rect.bottom, Styles.get("text_main"));
+            canvas.drawText(x + ":" + y, rect.left, rect.bottom-4, Styles.get("text_main"));
+        }
+
+        @Override public int getZIndex() {
+            return 10000;
+        }
+
+        @Override public int getId() {
+            return 1;
         }
 
         @Nullable @Override public Rect getArea() {

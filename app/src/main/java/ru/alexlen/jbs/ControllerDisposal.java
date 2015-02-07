@@ -96,7 +96,7 @@ public class ControllerDisposal implements CellActionListener {
         }
 
         Ship ship = recognizeShip(targetCell);
-        if (ship.size() ==1) {
+        if (ship.size() == 1) {
             direction = null;
         }
 
@@ -137,9 +137,10 @@ public class ControllerDisposal implements CellActionListener {
         mDraftShip = null;
         mView.drawCommittedShips(shipsArea.getArea());
 
-       // if (mAvailShips.isEndedAllShips()) {
+        if (mAvailShips.isEndedAllShips()) {
+            mView.clear();
             mActivity.startBattle(shipsArea);
-//        }
+        }
     }
 
     private Ship recognizeShip(final Cell targetCell) {

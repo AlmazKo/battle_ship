@@ -53,7 +53,7 @@ public class ControllerBattle implements CellActionListener {
         turn(knownShips, cell, result);
         mView.drawCommittedShips(knownShips.getArea(), playerShips.getArea());
 
-        if (result == HIT) {
+        if (result == WIN) {
             mView.drawWin();
             mView.setCellActionListener(null);
         }

@@ -8,5 +8,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface RenderTask {
     public void draw(@NotNull final Canvas canvas);
+    public int getZIndex();
+    public int getId();
    // public boolean isInstant();
 }

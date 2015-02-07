@@ -32,4 +32,12 @@ public final class RenderTaskSet implements AreaRenderTask{
             task.draw(canvas);
         }
     }
+
+    @Override public int getZIndex() {
+        return 0;
+    }
+
+    @Override public int getId() {
+        return 0;
+    }
 }

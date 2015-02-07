@@ -10,7 +10,7 @@ public class Styles {
 
     private static Map<String, Paint> styles = new HashMap<>();
     private static Paint defaultStyle;
-    public static int gridCellOffset;
+    public static  int   gridCellOffset;
 
     static {
         defaultStyle = new Paint();
@@ -141,9 +141,9 @@ public class Styles {
         paint.setColor(0xFF00DD73);
         paint.setAntiAlias(true);
         paint.setTextSize(gridCellOffset * 8);
+        paint.setShadowLayer(blurSize * 2, 0, 0, 0xFF00DD73);
         paint.setTypeface(tf);
         styles.put("text_win_title", paint);
-
 
 
         tf = Typeface.create("Helvetica", Typeface.NORMAL);
@@ -155,8 +155,7 @@ public class Styles {
         styles.put("text_main", paint);
 
 
-
-           // disposal
+        // disposal
         paint = new Paint();
         paint.setColor(0xFFFF0000);
         paint.setAntiAlias(true);
@@ -187,7 +186,6 @@ public class Styles {
             return paint;
         }
     }
-
 
 
     public static Paint mix(Paint... paints) {

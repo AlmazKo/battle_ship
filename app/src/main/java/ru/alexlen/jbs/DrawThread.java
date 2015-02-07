@@ -1,11 +1,12 @@
 package ru.alexlen.jbs;
 
-import android.graphics.*;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.SurfaceHolder;
-
-import java.util.concurrent.BlockingDeque;
 
 /**
  * @author Almazko
@@ -73,80 +74,137 @@ public class DrawThread extends Thread {
     private final FrameRater rater = new FrameRater();
 
     private boolean isStop = false;
-    private BlockingDeque<RenderTask> queue;
+    private final GraphStack stack;
 
-    public DrawThread(SurfaceHolder surfaceHolder, BlockingDeque<RenderTask> queue) {
+    public DrawThread(SurfaceHolder surfaceHolder, GraphStack stack) {
         this.surfaceHolder = surfaceHolder;
-        this.queue = queue;
+        this.stack = stack;
     }
+
+    final static int TURN = 50; //ms
+    long TICK = 0; //ms
 
     @Override
     public void run() {
-        RenderTask task;
-        Canvas canvas;
-
         Log.d(TAG, "Start Daemon");
 
+        long start;
+        long end;
+        long remain;
+
         while (!isStop) {
-            try {
-                task = queue.take();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-                return;
+
+            start = SystemClock.elapsedRealtime();
+            TICK++;
+
+            if (!stack.isChanged()) continue;
+
+            RenderTask[] tasks = stack.getCopy();
+
+            if (tasks.length != 0) {
+                Log.d(TAG, "Tick: " + TICK + ", tasks: " + tasks.length);
+
+                draw2(tasks);
             }
 
-            long start = SystemClock.elapsedRealtime();
+            end = SystemClock.elapsedRealtime();
 
-            canvas = null;
-
-            Rect rect = null;
-            if (task instanceof AreaRenderTask) {
-                rect = ((AreaRenderTask) task).getArea();
-            }
-
-            if (rect != null) {
-                Log.d(TAG, "Got task: " + task + " " + rect.toShortString() + " still: " + queue.size());
-            } else {
-                Log.d(TAG, "Got task: " + task + " still: " + queue.size());
-            }
+            remain = TURN - (end - start);
+            if (remain <= 0) continue;
 
             try {
-                // получаем объект Canvas и выполняем отрисовку
-                canvas = surfaceHolder.lockCanvas(rect);
-                if (canvas == null) continue;
-
-//                if (!(task instanceof ControlTask)) canvas.drawColor(0xFF000000);
-//                if (!(task instanceof ControlTask)) canvas.drawColor(0xFF000000);
-
-                canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-                synchronized (surfaceHolder) {
-                    task.draw(canvas);
-                    rater.commitFrame(start, SystemClock.elapsedRealtime());
-
-                    Bitmap bitmap = Bitmap.createBitmap(canvas.getWidth(), canvas.getHeight(), Bitmap.Config.ARGB_8888);
-                  //  surfaceHolder.draw(new Canvas(bitmap));
-                }
-            } finally {
-                if (canvas != null) {
-                    // отрисовка выполнена. выводим результат на экран
-                    surfaceHolder.unlockCanvasAndPost(canvas);
-
-                } else {
-                    Log.d(TAG, "Null finally canvas");
-                }
-
-
-            }
-
-//            try {
-//                //let other threads do they work
-//                Thread.sleep(15);
-//            } catch (InterruptedException ignored) {}
-
-
+                //let other threads do they work
+                Thread.sleep(remain);
+            } catch (InterruptedException ignored) {}
         }
 
     }
+
+    private void draw2(RenderTask[] tasks) {
+        Canvas canvas = null;
+        try {
+            canvas = surfaceHolder.lockCanvas(null);
+            if (canvas == null) return; //may be in end
+            draw(canvas, tasks);
+
+        } finally {
+            if (canvas != null) {
+                // отрисовка выполнена. выводим результат на экран
+                surfaceHolder.unlockCanvasAndPost(canvas);
+
+            } else {
+                Log.d(TAG, "Null finally canvas");
+            }
+
+
+        }
+    }
+
+    private void draw(Canvas canvas, RenderTask[] tasks) {
+
+        canvas.drawColor(0xFF000000);
+
+        for (RenderTask renderTask : tasks) {
+            renderTask.draw(canvas);
+        }
+
+        // rater.commitFrame();
+
+    }
+
+    private void process(RenderTask task, long start) {
+        Canvas canvas = null;
+
+        Rect rect = null;
+        if (task instanceof AreaRenderTask) {
+            rect = ((AreaRenderTask) task).getArea();
+        }
+
+//        if (rect != null) {
+//            Log.d(TAG, "Got task: " + task + " " + rect.toShortString() + " still: " + queue.size());
+//        } else {
+//            Log.d(TAG, "Got task: " + task + " still: " + queue.size());
+//        }
+
+        try {
+            // получаем объект Canvas и выполняем отрисовку
+            canvas = surfaceHolder.lockCanvas(rect);
+            if (canvas == null) return;
+
+            canvas.drawColor(0xFF000000);
+//                if (!(task instanceof ControlTask)) canvas.drawColor(0xFF000000);
+//                if (!(task instanceof ControlTask)) canvas.drawColor(0xFF000000);
+
+//                canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+            //canvas.drawColor(Color.TRANSPARENT);
+
+//                synchronized (surfaceHolder) {
+
+
+//                bitmap = Bitmap.createBitmap(canvas.getWidth(), canvas.getHeight(), Bitmap.Config.ARGB_8888);
+//                Canvas canvas2 = new Canvas(bitmap);
+            task.draw(canvas);
+//                task.draw(canvas2);
+
+            // rater.commitFrame(start, SystemClock.elapsedRealtime());
+
+
+            //scanvas.drawBitmap(bitmap, 0, 0, null);
+
+
+            //  surfaceHolder.draw(new Canvas(bitmap));
+//                }
+        } finally {
+            if (canvas != null) {
+                // отрисовка выполнена. выводим результат на экран
+                surfaceHolder.unlockCanvasAndPost(canvas);
+
+            } else {
+                Log.d(TAG, "Null finally canvas");
+            }
+        }
+    }
+
 
     @Override
     public void interrupt() {
