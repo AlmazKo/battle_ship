@@ -13,7 +13,18 @@ import android.view.SurfaceHolder;
  */
 public class DrawThread extends Thread {
 
-    private static final String TAG = "JBS_DrawThread";
+    private static final String TAG  = "JBS_DrawThread";
+    private final static int    TURN = 50; //ms
+
+    private final SurfaceHolder surfaceHolder;
+    private final FrameRater rater = new FrameRater();
+
+    private long start;
+
+    private long    TICK   = 0;
+    private boolean isStop = false;
+    private final GraphStack stack;
+
 
     private final static class FrameRater {
 
@@ -70,25 +81,15 @@ public class DrawThread extends Thread {
         }
     }
 
-    private final SurfaceHolder surfaceHolder;
-    private final FrameRater rater = new FrameRater();
-
-    private boolean isStop = false;
-    private final GraphStack stack;
-
     public DrawThread(SurfaceHolder surfaceHolder, GraphStack stack) {
         this.surfaceHolder = surfaceHolder;
         this.stack = stack;
     }
 
-    final static int TURN = 50; //ms
-    long TICK = 0; //ms
-
     @Override
     public void run() {
         Log.d(TAG, "Start Daemon");
 
-        long start;
         long end;
         long remain;
 
@@ -104,7 +105,7 @@ public class DrawThread extends Thread {
             if (tasks.length != 0) {
                 Log.d(TAG, "Tick: " + TICK + ", tasks: " + tasks.length);
 
-                draw2(tasks);
+                processTasks(tasks);
             }
 
             end = SystemClock.elapsedRealtime();
@@ -120,7 +121,7 @@ public class DrawThread extends Thread {
 
     }
 
-    private void draw2(RenderTask[] tasks) {
+    private void processTasks(RenderTask[] tasks) {
         Canvas canvas = null;
         try {
             canvas = surfaceHolder.lockCanvas(null);
@@ -140,16 +141,21 @@ public class DrawThread extends Thread {
         }
     }
 
+
+
     private void draw(Canvas canvas, RenderTask[] tasks) {
 
         canvas.drawColor(0xFF000000);
 
         for (RenderTask renderTask : tasks) {
+            if (renderTask instanceof AnimatedTask) {
+                ((AnimatedTask) renderTask).setElapsedTime(start);
+            }
+
             renderTask.draw(canvas);
         }
 
         // rater.commitFrame();
-
     }
 
     private void process(RenderTask task, long start) {

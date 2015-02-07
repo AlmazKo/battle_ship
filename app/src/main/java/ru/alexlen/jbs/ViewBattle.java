@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import ru.alexlen.jbs.event.GameEvent;
 import ru.alexlen.jbs.game.Area;
 import ru.alexlen.jbs.game.Cell;
@@ -169,12 +168,15 @@ public class ViewBattle extends AbstractView {
 
     public void drawWin() {
 
-        view.addRenderTask(new ControlTask() {
+
+        AnimatedTask task = new AnimatedTask() {
             int id = view.getUniqueId();
+
             @Override
             public void draw(@NotNull final Canvas canvas) {
 
-                canvas.drawColor(0x99000000);
+                float value = getValue();
+                canvas.drawColor((int) (0x99 * value) << 24);
                 canvas.drawText("Win battle!", 150, 450, Styles.get("text_win_title"));
             }
 
@@ -185,11 +187,11 @@ public class ViewBattle extends AbstractView {
             @Override public int getId() {
                 return id;
             }
+        };
 
-            @Nullable @Override public Rect getArea() {
-                return new Rect(canvasArea);
-            }
-        });
+        task.setLifeTime(500);
+
+        view.addRenderTask(task);
 
         isEnd = true;
 

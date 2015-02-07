@@ -16,7 +16,8 @@ public final class GraphStack {
     private boolean isChanged = true;
 
     public boolean isChanged() {
-        return isChanged;
+
+        return true;
     }
 
     public RenderTask[] getCopy() {
