@@ -177,7 +177,8 @@ public class ViewBattle extends AbstractView {
 
                 float value = getValue();
                 canvas.drawColor((int) (0x99 * value) << 24);
-                canvas.drawText("Win battle!", 150, 450, Styles.get("text_win_title"));
+                canvas.drawText("Battleship has won!", 150, 450, Styles.get("text_win_title"));
+                canvas.drawText("Long touch for restarting", 150, 600, Styles.get("text_title"));
             }
 
             @Override public int getZIndex() {
